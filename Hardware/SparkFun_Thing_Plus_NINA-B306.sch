@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -28754,9 +28754,9 @@ accelerometer and 3D digital gyroscope tailored for Industry 4.0 applications.&l
 <clearance class="0" value="0.2"/>
 <clearance class="1" value="0.11"/>
 </class>
-<class number="3" name="analog" width="0.2" drill="0.3">
-<clearance class="0" value="0.3"/>
-<clearance class="1" value="0.3"/>
+<class number="3" name="analog" width="0.11" drill="0.2">
+<clearance class="0" value="0.2"/>
+<clearance class="1" value="0.2"/>
 <clearance class="2" value="0.2"/>
 <clearance class="3" value="0.2"/>
 </class>
@@ -28764,14 +28764,14 @@ accelerometer and 3D digital gyroscope tailored for Industry 4.0 applications.&l
 <clearance class="0" value="0.2"/>
 <clearance class="1" value="0.3"/>
 <clearance class="2" value="0.2"/>
-<clearance class="3" value="1"/>
+<clearance class="3" value="0.2"/>
 <clearance class="4" value="0.15"/>
 </class>
 <class number="5" name="usb_diff" width="0.24" drill="0.3">
 <clearance class="0" value="0.2"/>
 <clearance class="1" value="0.23"/>
 <clearance class="2" value="0.4"/>
-<clearance class="3" value="1"/>
+<clearance class="3" value="0.2"/>
 <clearance class="4" value="0.4"/>
 <clearance class="5" value="0.23"/>
 </class>
