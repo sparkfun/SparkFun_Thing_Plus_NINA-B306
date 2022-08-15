@@ -28744,9 +28744,36 @@ accelerometer and 3D digital gyroscope tailored for Industry 4.0 applications.&l
 <variantdefs>
 </variantdefs>
 <classes>
-<class number="0" name="default" width="0" drill="0">
+<class number="0" name="default" width="0.11" drill="0.3">
+<clearance class="0" value="0.11"/>
 </class>
-<class number="1" name="power" width="0.3048" drill="0.3048">
+<class number="1" name="power" width="0.2" drill="0.3">
+<clearance class="1" value="0.3"/>
+</class>
+<class number="2" name="ground" width="0.11" drill="0.3">
+<clearance class="0" value="0.2"/>
+<clearance class="1" value="0.11"/>
+</class>
+<class number="3" name="analog" width="0.2" drill="0.3">
+<clearance class="0" value="0.3"/>
+<clearance class="1" value="0.3"/>
+<clearance class="2" value="0.2"/>
+<clearance class="3" value="0.2"/>
+</class>
+<class number="4" name="HS_digital" width="0.11" drill="0.3">
+<clearance class="0" value="0.2"/>
+<clearance class="1" value="0.3"/>
+<clearance class="2" value="0.2"/>
+<clearance class="3" value="1"/>
+<clearance class="4" value="0.15"/>
+</class>
+<class number="5" name="usb_diff" width="0.24" drill="0.3">
+<clearance class="0" value="0.4"/>
+<clearance class="1" value="0.23"/>
+<clearance class="2" value="0.4"/>
+<clearance class="3" value="1"/>
+<clearance class="4" value="0.4"/>
+<clearance class="5" value="0.23"/>
 </class>
 </classes>
 <parts>
@@ -29502,7 +29529,7 @@ VBUS: 5V</text>
 <busses>
 </busses>
 <nets>
-<net name="GND" class="0">
+<net name="GND" class="2">
 <segment>
 <pinref part="GND1" gate="1" pin="GND"/>
 <pinref part="J1" gate="J1" pin="GND"/>
@@ -29773,7 +29800,7 @@ VBUS: 5V</text>
 <wire x1="50.8" y1="241.3" x2="50.8" y2="231.14" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="USB_N" class="0">
+<net name="USB_N" class="5">
 <segment>
 <pinref part="J1" gate="J1" pin="D-"/>
 <wire x1="25.4" y1="243.84" x2="60.96" y2="243.84" width="0.1524" layer="91"/>
@@ -29789,7 +29816,7 @@ VBUS: 5V</text>
 <pinref part="U2" gate="G$1" pin="USB_DM"/>
 </segment>
 </net>
-<net name="USB_P" class="0">
+<net name="USB_P" class="5">
 <segment>
 <pinref part="J1" gate="J1" pin="D+"/>
 <pinref part="U1" gate="U1" pin="IO3"/>
@@ -29805,7 +29832,7 @@ VBUS: 5V</text>
 <pinref part="U2" gate="G$1" pin="USB_DP"/>
 </segment>
 </net>
-<net name="V_USB" class="0">
+<net name="V_USB" class="1">
 <segment>
 <pinref part="SUPPLY1" gate="G$1" pin="V_USB"/>
 <pinref part="J1" gate="J1" pin="VBUS"/>
@@ -29860,7 +29887,7 @@ VBUS: 5V</text>
 <junction x="12.7" y="157.48"/>
 </segment>
 </net>
-<net name="V_BATT" class="0">
+<net name="V_BATT" class="1">
 <segment>
 <pinref part="U4" gate="G$1" pin="VBAT"/>
 <wire x1="292.1" y1="248.92" x2="289.56" y2="248.92" width="0.1524" layer="91"/>
@@ -29933,7 +29960,7 @@ VBUS: 5V</text>
 <wire x1="279.4" y1="246.38" x2="279.4" y2="243.84" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="VIN" class="0">
+<net name="VIN" class="1">
 <segment>
 <pinref part="D3" gate="G$1" pin="C"/>
 <pinref part="U3" gate="G$1" pin="IN"/>
@@ -29973,7 +30000,7 @@ VBUS: 5V</text>
 <label x="200.66" y="147.32" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="3.3V" class="0">
+<net name="3.3V" class="1">
 <segment>
 <pinref part="C8" gate="G$1" pin="1"/>
 <pinref part="U3" gate="G$1" pin="OUT"/>
@@ -30130,7 +30157,7 @@ VBUS: 5V</text>
 <wire x1="195.58" y1="238.76" x2="195.58" y2="241.3" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="IO48/POCI" class="0">
+<net name="IO48/POCI" class="4">
 <segment>
 <wire x1="281.94" y1="30.48" x2="279.4" y2="30.48" width="0.1524" layer="91"/>
 <label x="279.4" y="30.48" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
@@ -30147,7 +30174,7 @@ VBUS: 5V</text>
 <pinref part="U2" gate="G$1" pin="QSPI_D1/IO48"/>
 </segment>
 </net>
-<net name="IO50/PICO" class="0">
+<net name="IO50/PICO" class="4">
 <segment>
 <wire x1="281.94" y1="25.4" x2="279.4" y2="25.4" width="0.1524" layer="91"/>
 <label x="279.4" y="25.4" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
@@ -30164,7 +30191,7 @@ VBUS: 5V</text>
 <pinref part="U2" gate="G$1" pin="QSPI_D0/IO50"/>
 </segment>
 </net>
-<net name="IO52/SCK" class="0">
+<net name="IO52/SCK" class="4">
 <segment>
 <wire x1="281.94" y1="27.94" x2="279.4" y2="27.94" width="0.1524" layer="91"/>
 <label x="279.4" y="27.94" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
@@ -30197,7 +30224,7 @@ VBUS: 5V</text>
 <pinref part="U2" gate="G$1" pin="QSPI_CS/IO51"/>
 </segment>
 </net>
-<net name="SWCLK" class="0">
+<net name="SWCLK" class="4">
 <segment>
 <wire x1="213.36" y1="30.48" x2="215.9" y2="30.48" width="0.1524" layer="91"/>
 <label x="213.36" y="30.48" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
@@ -30209,7 +30236,7 @@ VBUS: 5V</text>
 <pinref part="U2" gate="G$1" pin="SWDCLK"/>
 </segment>
 </net>
-<net name="SWDIO" class="0">
+<net name="SWDIO" class="4">
 <segment>
 <wire x1="233.68" y1="33.02" x2="231.14" y2="33.02" width="0.1524" layer="91"/>
 <label x="233.68" y="33.02" size="1.27" layer="95" font="vector" xref="yes"/>
@@ -30275,7 +30302,7 @@ VBUS: 5V</text>
 <pinref part="TP2" gate="G$1" pin="1"/>
 </segment>
 </net>
-<net name="IO20/A3" class="0">
+<net name="IO20/A3" class="3">
 <segment>
 <wire x1="109.22" y1="137.16" x2="106.68" y2="137.16" width="0.1524" layer="91"/>
 <label x="109.22" y="137.16" size="1.27" layer="95" font="vector" xref="yes"/>
@@ -30287,7 +30314,7 @@ VBUS: 5V</text>
 <pinref part="J2" gate="G$1" pin="A3"/>
 </segment>
 </net>
-<net name="IO24/A0" class="0">
+<net name="IO24/A0" class="3">
 <segment>
 <wire x1="109.22" y1="127" x2="106.68" y2="127" width="0.1524" layer="91"/>
 <label x="109.22" y="127" size="1.27" layer="95" font="vector" xref="yes"/>
@@ -30299,7 +30326,7 @@ VBUS: 5V</text>
 <pinref part="J2" gate="G$1" pin="A0"/>
 </segment>
 </net>
-<net name="IO23/A1" class="0">
+<net name="IO23/A1" class="3">
 <segment>
 <wire x1="109.22" y1="129.54" x2="106.68" y2="129.54" width="0.1524" layer="91"/>
 <label x="109.22" y="129.54" size="1.27" layer="95" font="vector" xref="yes"/>
@@ -30311,7 +30338,7 @@ VBUS: 5V</text>
 <pinref part="J2" gate="G$1" pin="A1"/>
 </segment>
 </net>
-<net name="IO27/A2" class="0">
+<net name="IO27/A2" class="3">
 <segment>
 <wire x1="109.22" y1="121.92" x2="106.68" y2="121.92" width="0.1524" layer="91"/>
 <label x="109.22" y="121.92" size="1.27" layer="95" font="vector" xref="yes"/>
@@ -30323,7 +30350,7 @@ VBUS: 5V</text>
 <pinref part="J2" gate="G$1" pin="A2"/>
 </segment>
 </net>
-<net name="IO17/A5" class="0">
+<net name="IO17/A5" class="3">
 <segment>
 <wire x1="109.22" y1="142.24" x2="106.68" y2="142.24" width="0.1524" layer="91"/>
 <label x="109.22" y="142.24" size="1.27" layer="95" font="vector" xref="yes"/>
@@ -30335,7 +30362,7 @@ VBUS: 5V</text>
 <pinref part="J2" gate="G$1" pin="A5"/>
 </segment>
 </net>
-<net name="IO18/A4" class="0">
+<net name="IO18/A4" class="3">
 <segment>
 <wire x1="109.22" y1="139.7" x2="106.68" y2="139.7" width="0.1524" layer="91"/>
 <label x="109.22" y="139.7" size="1.27" layer="95" font="vector" xref="yes"/>
@@ -30347,7 +30374,7 @@ VBUS: 5V</text>
 <pinref part="J2" gate="G$1" pin="A4"/>
 </segment>
 </net>
-<net name="IO42/SCL" class="0">
+<net name="IO42/SCL" class="4">
 <segment>
 <pinref part="U2" gate="G$1" pin="IO42"/>
 <wire x1="149.86" y1="99.06" x2="132.08" y2="99.06" width="0.1524" layer="91"/>
@@ -30383,7 +30410,7 @@ VBUS: 5V</text>
 <pinref part="U6" gate="G$1" pin="SCL"/>
 </segment>
 </net>
-<net name="IO43/SDA" class="0">
+<net name="IO43/SDA" class="4">
 <segment>
 <pinref part="U2" gate="G$1" pin="IO43"/>
 <wire x1="149.86" y1="96.52" x2="147.32" y2="96.52" width="0.1524" layer="91"/>
@@ -30508,7 +30535,7 @@ VBUS: 5V</text>
 <pinref part="U2" gate="G$1" pin="IO1"/>
 </segment>
 </net>
-<net name="IO7/NINA_TX/DEV_RX" class="0">
+<net name="IO7/NINA_TX/DEV_RX" class="4">
 <segment>
 <pinref part="U2" gate="G$1" pin="IO7"/>
 <wire x1="109.22" y1="147.32" x2="106.68" y2="147.32" width="0.1524" layer="91"/>
@@ -30520,7 +30547,7 @@ VBUS: 5V</text>
 <pinref part="J2" gate="G$1" pin="TX"/>
 </segment>
 </net>
-<net name="IO5/NINA_RX/DEV_TX" class="0">
+<net name="IO5/NINA_RX/DEV_TX" class="4">
 <segment>
 <pinref part="U2" gate="G$1" pin="IO5"/>
 <wire x1="109.22" y1="149.86" x2="106.68" y2="149.86" width="0.1524" layer="91"/>
@@ -30532,7 +30559,7 @@ VBUS: 5V</text>
 <pinref part="J2" gate="G$1" pin="RX"/>
 </segment>
 </net>
-<net name="N$9" class="0">
+<net name="SDA_PU_PWR" class="1">
 <segment>
 <pinref part="R7" gate="G$1" pin="2"/>
 <wire x1="147.32" y1="114.3" x2="147.32" y2="111.76" width="0.1524" layer="91"/>
@@ -30540,7 +30567,7 @@ VBUS: 5V</text>
 <wire x1="147.32" y1="114.3" x2="144.78" y2="114.3" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$17" class="0">
+<net name="SCL_PU_PWR" class="1">
 <segment>
 <pinref part="R5" gate="G$1" pin="2"/>
 <wire x1="132.08" y1="111.76" x2="132.08" y2="114.3" width="0.1524" layer="91"/>
@@ -30610,7 +30637,7 @@ VBUS: 5V</text>
 <pinref part="J2" gate="G$1" pin="FREEBIE"/>
 </segment>
 </net>
-<net name="N$7" class="0">
+<net name="3V3_QWIIC" class="1">
 <segment>
 <pinref part="Q3" gate="G$1" pin="D"/>
 <pinref part="J6" gate="G$1" pin="2"/>
@@ -30619,18 +30646,6 @@ VBUS: 5V</text>
 <wire x1="302.26" y1="152.4" x2="309.88" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="302.26" y1="149.86" x2="302.26" y2="152.4" width="0.1524" layer="91"/>
 <junction x="302.26" y="152.4"/>
-</segment>
-</net>
-<net name="N$12" class="0">
-<segment>
-<wire x1="287.02" y1="139.7" x2="287.02" y2="137.16" width="0.1524" layer="91"/>
-<wire x1="287.02" y1="137.16" x2="292.1" y2="137.16" width="0.1524" layer="91"/>
-<wire x1="292.1" y1="137.16" x2="292.1" y2="134.62" width="0.1524" layer="91"/>
-<pinref part="R12" gate="G$1" pin="1"/>
-<pinref part="R13" gate="G$1" pin="2"/>
-<pinref part="Q3" gate="G$1" pin="G"/>
-<wire x1="292.1" y1="144.78" x2="292.1" y2="137.16" width="0.1524" layer="91"/>
-<junction x="292.1" y="137.16"/>
 </segment>
 </net>
 <net name="N$13" class="0">
@@ -30710,6 +30725,18 @@ VBUS: 5V</text>
 <wire x1="274.32" y1="22.86" x2="281.94" y2="22.86" width="0.1524" layer="91"/>
 <wire x1="274.32" y1="20.32" x2="274.32" y2="22.86" width="0.1524" layer="91"/>
 <junction x="274.32" y="22.86"/>
+</segment>
+</net>
+<net name="N$7" class="0">
+<segment>
+<pinref part="R12" gate="G$1" pin="1"/>
+<wire x1="292.1" y1="137.16" x2="287.02" y2="137.16" width="0.1524" layer="91"/>
+<wire x1="287.02" y1="137.16" x2="287.02" y2="139.7" width="0.1524" layer="91"/>
+<pinref part="Q3" gate="G$1" pin="G"/>
+<wire x1="292.1" y1="144.78" x2="292.1" y2="137.16" width="0.1524" layer="91"/>
+<pinref part="R13" gate="G$1" pin="2"/>
+<wire x1="292.1" y1="134.62" x2="292.1" y2="137.16" width="0.1524" layer="91"/>
+<junction x="292.1" y="137.16"/>
 </segment>
 </net>
 </nets>
