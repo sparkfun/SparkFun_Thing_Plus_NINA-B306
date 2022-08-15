@@ -28748,7 +28748,7 @@ accelerometer and 3D digital gyroscope tailored for Industry 4.0 applications.&l
 <clearance class="0" value="0.11"/>
 </class>
 <class number="1" name="power" width="0.2" drill="0.3">
-<clearance class="1" value="0.3"/>
+<clearance class="1" value="0.2"/>
 </class>
 <class number="2" name="ground" width="0.11" drill="0.3">
 <clearance class="0" value="0.2"/>
@@ -28768,7 +28768,7 @@ accelerometer and 3D digital gyroscope tailored for Industry 4.0 applications.&l
 <clearance class="4" value="0.15"/>
 </class>
 <class number="5" name="usb_diff" width="0.24" drill="0.3">
-<clearance class="0" value="0.4"/>
+<clearance class="0" value="0.2"/>
 <clearance class="1" value="0.23"/>
 <clearance class="2" value="0.4"/>
 <clearance class="3" value="1"/>

@@ -2783,7 +2783,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <clearance class="0" value="0.11"/>
 </class>
 <class number="1" name="power" width="0.2" drill="0.3">
-<clearance class="1" value="0.3"/>
+<clearance class="1" value="0.2"/>
 </class>
 <class number="2" name="ground" width="0.11" drill="0.3">
 <clearance class="0" value="0.2"/>
@@ -2803,7 +2803,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <clearance class="4" value="0.15"/>
 </class>
 <class number="5" name="usb_diff" width="0.24" drill="0.3">
-<clearance class="0" value="0.4"/>
+<clearance class="0" value="0.2"/>
 <clearance class="1" value="0.23"/>
 <clearance class="2" value="0.4"/>
 <clearance class="3" value="1"/>
@@ -2811,7 +2811,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <clearance class="5" value="0.23"/>
 </class>
 </classes>
-<designrules name="SparkFun-4-Layer-General-JLCPCB">
+<designrules name="SparkFun-4-Layer-General-JLCPCB *">
 <description language="en">&lt;b&gt;4 Layer General Rules for JLCPCB&lt;/b&gt;
 &lt;p&gt;
 These are the free and generally easy to produce 4-layer PCB design rules. You can certainly go smaller but if the design doesn't call for it, these rules provide good guidance.
@@ -2823,8 +2823,8 @@ These are the free and generally easy to produce 4-layer PCB design rules. You c
 &lt;li&gt;3mil Stop Mask&lt;/li&gt;
 &lt;/ul&gt;</description>
 <param name="layerSetup" value="(1+2*15+16)"/>
-<param name="mtCopper" value="0.035559375mm 0.035559375mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035559375mm 0.035559375mm"/>
-<param name="mtIsolate" value="0.47751875mm 0.47751875mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.47751875mm"/>
+<param name="mtCopper" value="0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm"/>
+<param name="mtIsolate" value="0.2104mm 1.065mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2104mm"/>
 <param name="mdWireWire" value="7mil"/>
 <param name="mdWirePad" value="7mil"/>
 <param name="mdWireVia" value="7mil"/>
