@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -27717,24 +27717,22 @@ Commonly used for small ceramic capacitors. Like our 0.1uF (http://www.sparkfun.
 </library>
 <library name="MISC">
 <packages>
-<package name="PAD_05_03X2_TP">
+<package name="PAD_05_03X2_TP_NO4">
 <smd name="1" x="-2.54" y="-1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
 <smd name="2" x="-2.54" y="1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
 <smd name="3" x="0" y="-1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
-<smd name="4" x="0" y="1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
 <smd name="5" x="2.54" y="-1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
 <smd name="6" x="2.54" y="1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
 </package>
 </packages>
 <symbols>
-<symbol name="CONN_03X2">
+<symbol name="CONN_03X2_NO4">
 <description>&lt;h3&gt;6 Pin Connection&lt;/h3&gt;
 3x2 pin layout</description>
 <pin name="1" x="-7.62" y="2.54" visible="pad" length="middle"/>
 <pin name="3" x="-7.62" y="0" visible="pad" length="middle"/>
 <pin name="5" x="-7.62" y="-2.54" visible="pad" length="middle"/>
 <pin name="6" x="7.62" y="-2.54" visible="pad" length="middle" rot="R180"/>
-<pin name="4" x="7.62" y="0" visible="pad" length="middle" rot="R180"/>
 <pin name="2" x="7.62" y="2.54" visible="pad" length="middle" rot="R180"/>
 <text x="-3.556" y="5.588" size="1.778" layer="95" font="vector">&gt;NAME</text>
 <text x="-3.302" y="-5.842" size="1.778" layer="96" font="vector" align="top-left">&gt;VALUE</text>
@@ -27746,22 +27744,20 @@ Commonly used for small ceramic capacitors. Like our 0.1uF (http://www.sparkfun.
 <wire x1="3.81" y1="-5.08" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
 <wire x1="-3.81" y1="5.08" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
 <wire x1="1.27" y1="-2.54" x2="2.54" y2="-2.54" width="0.6096" layer="94"/>
-<wire x1="1.27" y1="0" x2="2.54" y2="0" width="0.6096" layer="94"/>
 <wire x1="1.27" y1="2.54" x2="2.54" y2="2.54" width="0.6096" layer="94"/>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="CONN_03X2" prefix="J">
+<deviceset name="CONN_03X2_NO4" prefix="J">
 <gates>
-<gate name="G$1" symbol="CONN_03X2" x="0" y="0"/>
+<gate name="G$1" symbol="CONN_03X2_NO4" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="PAD_05_03X2_TP">
+<device name="" package="PAD_05_03X2_TP_NO4">
 <connects>
 <connect gate="G$1" pin="1" pad="1"/>
 <connect gate="G$1" pin="2" pad="2"/>
 <connect gate="G$1" pin="3" pad="3"/>
-<connect gate="G$1" pin="4" pad="4"/>
 <connect gate="G$1" pin="5" pad="5"/>
 <connect gate="G$1" pin="6" pad="6"/>
 </connects>
@@ -28767,13 +28763,13 @@ accelerometer and 3D digital gyroscope tailored for Industry 4.0 applications.&l
 <clearance class="3" value="0.2"/>
 <clearance class="4" value="0.15"/>
 </class>
-<class number="5" name="usb_diff" width="0.24" drill="0.3">
+<class number="5" name="usb_diff" width="0.2" drill="0.2">
 <clearance class="0" value="0.2"/>
-<clearance class="1" value="0.23"/>
-<clearance class="2" value="0.4"/>
+<clearance class="1" value="0.2"/>
+<clearance class="2" value="0.2"/>
 <clearance class="3" value="0.2"/>
 <clearance class="4" value="0.4"/>
-<clearance class="5" value="0.23"/>
+<clearance class="5" value="0.15"/>
 </class>
 </classes>
 <parts>
@@ -28863,7 +28859,7 @@ accelerometer and 3D digital gyroscope tailored for Industry 4.0 applications.&l
 <part name="TP2" library="SparkFun-Connectors" deviceset="TEST-POINT" device="3X5" value="TEST-POINT3X5"/>
 <part name="SUPPLY17" library="SparkFun-PowerSymbols" deviceset="3.3V" device=""/>
 <part name="GND15" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
-<part name="J3" library="MISC" deviceset="CONN_03X2" device=""/>
+<part name="J3" library="MISC" deviceset="CONN_03X2_NO4" device=""/>
 <part name="GND19" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="GND23" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="GND24" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
@@ -30683,7 +30679,7 @@ VBUS: 5V</text>
 <segment>
 <pinref part="U6" gate="G$1" pin="INT1"/>
 <wire x1="411.48" y1="149.86" x2="408.94" y2="149.86" width="0.1524" layer="91"/>
-<label x="411.48" y="149.86" size="1.27" layer="95" xref="yes"/>
+<label x="411.48" y="149.86" size="1.27" layer="95" font="vector" xref="yes"/>
 <pinref part="TP8" gate="G$1" pin="1"/>
 <wire x1="408.94" y1="149.86" x2="401.32" y2="149.86" width="0.1524" layer="91"/>
 <wire x1="408.94" y1="152.4" x2="408.94" y2="149.86" width="0.1524" layer="91"/>
@@ -30692,14 +30688,14 @@ VBUS: 5V</text>
 <segment>
 <pinref part="U2" gate="G$1" pin="IO21"/>
 <wire x1="109.22" y1="134.62" x2="106.68" y2="134.62" width="0.1524" layer="91"/>
-<label x="109.22" y="134.62" size="1.27" layer="95" xref="yes"/>
+<label x="109.22" y="134.62" size="1.27" layer="95" font="vector" xref="yes"/>
 </segment>
 </net>
 <net name="IO22/IMU_INT2" class="0">
 <segment>
 <pinref part="U6" gate="G$1" pin="INT2"/>
 <wire x1="401.32" y1="147.32" x2="408.94" y2="147.32" width="0.1524" layer="91"/>
-<label x="411.48" y="147.32" size="1.27" layer="95" xref="yes"/>
+<label x="411.48" y="147.32" size="1.27" layer="95" font="vector" xref="yes"/>
 <pinref part="TP9" gate="G$1" pin="1"/>
 <wire x1="408.94" y1="147.32" x2="411.48" y2="147.32" width="0.1524" layer="91"/>
 <wire x1="408.94" y1="144.78" x2="408.94" y2="147.32" width="0.1524" layer="91"/>
@@ -30708,18 +30704,18 @@ VBUS: 5V</text>
 <segment>
 <pinref part="U2" gate="G$1" pin="IO22"/>
 <wire x1="109.22" y1="132.08" x2="106.68" y2="132.08" width="0.1524" layer="91"/>
-<label x="109.22" y="132.08" size="1.27" layer="95" xref="yes"/>
+<label x="109.22" y="132.08" size="1.27" layer="95" font="vector" xref="yes"/>
 </segment>
 </net>
 <net name="IO37/SD_DET" class="0">
 <segment>
 <pinref part="U2" gate="G$1" pin="IO37"/>
 <wire x1="109.22" y1="111.76" x2="106.68" y2="111.76" width="0.1524" layer="91"/>
-<label x="109.22" y="111.76" size="1.27" layer="95" xref="yes"/>
+<label x="109.22" y="111.76" size="1.27" layer="95" font="vector" xref="yes"/>
 </segment>
 <segment>
 <wire x1="269.24" y1="22.86" x2="274.32" y2="22.86" width="0.1524" layer="91"/>
-<label x="269.24" y="22.86" size="1.27" layer="95" rot="MR0" xref="yes"/>
+<label x="269.24" y="22.86" size="1.27" layer="95" font="vector" rot="MR0" xref="yes"/>
 <pinref part="J4" gate="J1" pin="DET"/>
 <pinref part="TP4" gate="G$1" pin="1"/>
 <wire x1="274.32" y1="22.86" x2="281.94" y2="22.86" width="0.1524" layer="91"/>

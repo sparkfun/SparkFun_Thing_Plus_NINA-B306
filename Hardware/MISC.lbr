@@ -216,6 +216,13 @@ Used as a test point connection for pogo pins or other debugging tools.
 <wire x1="-0.8" y1="-0.9" x2="0.8" y2="-0.9" width="0.15" layer="21"/>
 <wire x1="0.9" y1="0" x2="1.4" y2="0" width="0.15" layer="21"/>
 </package>
+<package name="PAD_05_03X2_TP_NO4">
+<smd name="1" x="-2.54" y="-1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
+<smd name="2" x="-2.54" y="1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
+<smd name="3" x="0" y="-1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
+<smd name="5" x="2.54" y="-1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
+<smd name="6" x="2.54" y="1.27" dx="1.27" dy="1.27" layer="1" roundness="100" cream="no"/>
+</package>
 </packages>
 <symbols>
 <symbol name="CONN_03X2">
@@ -262,6 +269,26 @@ Used as a test point connection for pogo pins or other debugging tools.
 <pin name="A" x="12.7" y="0" visible="pin" length="short" rot="R180"/>
 <pin name="RED" x="-10.16" y="2.54" visible="pin" length="short"/>
 </symbol>
+<symbol name="CONN_03X2_NO4">
+<description>&lt;h3&gt;6 Pin Connection&lt;/h3&gt;
+3x2 pin layout</description>
+<pin name="1" x="-7.62" y="2.54" visible="pad" length="middle"/>
+<pin name="3" x="-7.62" y="0" visible="pad" length="middle"/>
+<pin name="5" x="-7.62" y="-2.54" visible="pad" length="middle"/>
+<pin name="6" x="7.62" y="-2.54" visible="pad" length="middle" rot="R180"/>
+<pin name="2" x="7.62" y="2.54" visible="pad" length="middle" rot="R180"/>
+<text x="-3.556" y="5.588" size="1.778" layer="95" font="vector">&gt;NAME</text>
+<text x="-3.302" y="-5.842" size="1.778" layer="96" font="vector" align="top-left">&gt;VALUE</text>
+<wire x1="-1.27" y1="-2.54" x2="-2.54" y2="-2.54" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="0" x2="-2.54" y2="0" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="2.54" x2="-2.54" y2="2.54" width="0.6096" layer="94"/>
+<wire x1="-3.81" y1="5.08" x2="-3.81" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="3.81" y1="-5.08" x2="-3.81" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="3.81" y1="-5.08" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
+<wire x1="-3.81" y1="5.08" x2="3.81" y2="5.08" width="0.4064" layer="94"/>
+<wire x1="1.27" y1="-2.54" x2="2.54" y2="-2.54" width="0.6096" layer="94"/>
+<wire x1="1.27" y1="2.54" x2="2.54" y2="2.54" width="0.6096" layer="94"/>
+</symbol>
 </symbols>
 <devicesets>
 <deviceset name="CONN_03X2" prefix="J">
@@ -303,6 +330,25 @@ Used as a test point connection for pogo pins or other debugging tools.
 <attribute name="VFG" value="2.6V" constant="no"/>
 <attribute name="VFR" value="1.6V" constant="no"/>
 </technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="CONN_03X2_NO4" prefix="J">
+<gates>
+<gate name="G$1" symbol="CONN_03X2_NO4" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="PAD_05_03X2_TP_NO4">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
+<connect gate="G$1" pin="5" pad="5"/>
+<connect gate="G$1" pin="6" pad="6"/>
+</connects>
+<technologies>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
