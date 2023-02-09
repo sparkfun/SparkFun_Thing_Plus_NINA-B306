@@ -1,27 +1,14 @@
-#include <NeoPixelBus.h> // http://librarymanager/All#NeoPixelBus
+#include <Adafruit_TinyUSB.h>
+#include <Adafruit_NeoPixel.h>
 
 const uint16_t PixelCount = 1;
-const uint8_t PixelPin = LEDRGB;
+const uint8_t PixelPin = PIN_NEOPIXEL;
 
 // Brightness in this case. 255 is max. 32 is visually palatable.
 #define colorSaturation 32
 
 // Define 3-pixel strip PixelCount long, using PixelPin as the DIN. Use GRB format formatted for WS2812.
-NeoPixelBus<NeoGrbFeature, NeoWs2812Method> strip(PixelCount, PixelPin);
-
-// Define colors using RGB format.
-RgbColor red(colorSaturation, 0, 0);
-RgbColor green(0, colorSaturation, 0);
-RgbColor blue(0, 0, colorSaturation);
-RgbColor white(colorSaturation);
-RgbColor black(0);
-
-// Define colors using Hue, Saturation, Lightness (HSL) format.
-HslColor hslRed(red);
-HslColor hslGreen(green);
-HslColor hslBlue(blue);
-HslColor hslWhite(white);
-HslColor hslBlack(black);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, PixelPin, NEO_GRB + NEO_KHZ800);
 
 void setup() {
   Serial.begin(115200);
@@ -32,8 +19,9 @@ void setup() {
   Serial.flush();
 
   // this resets all the neopixels to an off state
-  strip.Begin();
-  strip.Show();
+  strip.begin();
+  strip.setBrightness(50);
+  strip.show();
 
 
   Serial.println();
@@ -42,59 +30,32 @@ void setup() {
 
 void loop()
 {
-  delay(2000);
+  rainbow(20);
+}
 
-  Serial.println("Colors R, G, B, W...");
+void rainbow(uint8_t wait) {
+  uint16_t i, j;
 
-  // set the colors, 
-  // if they don't match in order, you need to use NeoGrbFeature feature
-  strip.SetPixelColor(0, red);
-  strip.Show();
-  delay(500);
-  strip.SetPixelColor(0, green);
-  strip.Show();
-  delay(500);
-  strip.SetPixelColor(0, blue);
-  strip.Show();
-  delay(500);
-  strip.SetPixelColor(0, white);
-  strip.Show();
-  delay(500);
+  for(j=0; j<256; j++) {
+    for(i=0; i<strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel((i+j) & 255));
+    }
+    strip.show();
+    delay(wait);
+  }
+}
 
-  delay(500);
-
-  Serial.println("Off ...");
-
-  // turn off the pixels
-  strip.SetPixelColor(0, black);
-  strip.Show();
-
-  delay(1000);
-
-  Serial.println("HSL Colors R, G, B, W...");
-
-  // set the colors, 
-  // if they don't match in order, you may need to use NeoGrbFeature feature
-  strip.SetPixelColor(0, hslRed);
-  strip.Show();
-  delay(500);
-  strip.SetPixelColor(0, hslGreen);
-  strip.Show();
-  delay(500);
-  strip.SetPixelColor(0, hslBlue);
-  strip.Show();
-  delay(500);
-  strip.SetPixelColor(0, hslWhite);
-  strip.Show();
-  delay(500);    
-
-
-  delay(500);
-
-  Serial.println("Off again...");
-
-  // turn off the pixels
-  strip.SetPixelColor(0, hslBlack);
-  strip.Show();
-  delay(1000);
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos) {
+  WheelPos = 255 - WheelPos;
+  if(WheelPos < 85) {
+    return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  }
+  if(WheelPos < 170) {
+    WheelPos -= 85;
+    return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  }
+  WheelPos -= 170;
+  return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }

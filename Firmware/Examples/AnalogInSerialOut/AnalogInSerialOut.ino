@@ -19,7 +19,7 @@
 
   https://www.arduino.cc/en/Tutorial/BuiltInExamples/AnalogInOutSerial
 */
-
+#include <Adafruit_TinyUSB.h>
 // These constants won't change. They're used to give names to the pins used:
 const int analogInPin = A0;  // Analog input pin that the potentiometer is attached to
 

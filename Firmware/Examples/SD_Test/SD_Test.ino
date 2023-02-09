@@ -7,13 +7,13 @@
   DirectoryFunctions.ino
 
 */
-
+#include <Adafruit_TinyUSB.h>
 #include <SPI.h>
 #include "SdFat.h"
 #include "sdios.h"
 
 // SD Card Chip Select
-const uint8_t SD_CS_PIN = PIN_SD_CS;
+const uint8_t SD_CS_PIN = PIN_SPI_SD_CS;
 
 // SD_FAT_TYPE = 0 for SdFat/File as defined in SdFatConfig.h,
 // 1 for FAT16/FAT32, 2 for exFAT, 3 for FAT16/FAT32 and exFAT.
@@ -22,16 +22,16 @@ const uint8_t SD_CS_PIN = PIN_SD_CS;
 // Test with reduced SPI speed for breadboards.  SD_SCK_MHZ(4) will select
 // the highest speed supported by the board that is not over 4 MHz.
 // Change SPI_SPEED to SD_SCK_MHZ(50) for best performance.
-#define SPI_SPEED SD_SCK_MHZ(50)
+#define SPI_SPEED SD_SCK_MHZ(4)
 //------------------------------------------------------------------------------
 
 // Try to select the best SD card configuration.
 #if HAS_SDIO_CLASS
 #define SD_CONFIG SdioConfig(FIFO_SDIO)
 #elif  ENABLE_DEDICATED_SPI
-#define SD_CONFIG SdSpiConfig(SD_CS_PIN, DEDICATED_SPI, SPI_SCK)
+#define SD_CONFIG SdSpiConfig(SD_CS_PIN, DEDICATED_SPI, PIN_SPI_SCK)
 #else  // HAS_SDIO_CLASS
-#define SD_CONFIG SdSpiConfig(SD_CS_PIN, SHARED_SPI, SPI_SCK)
+#define SD_CONFIG SdSpiConfig(SD_CS_PIN, SHARED_SPI, PIN_SPI_SCK)
 #endif  // HAS_SDIO_CLASS
 
 #if SD_FAT_TYPE == 0
@@ -67,15 +67,13 @@ ArduinoOutStream cout(Serial);
 */
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(!Serial) {
     yield();
   }
   delay(1000);
-  cout << F("Type any character to start\n");
-  while(!Serial.available()) {
-    yield();
-  }
+  Serial.println("");
+  Serial.println("Begind SD Test.");
 
   // Initialize the SD Card.
   if (!sd.begin(SD_CONFIG)) {

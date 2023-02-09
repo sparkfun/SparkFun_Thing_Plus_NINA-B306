@@ -3,14 +3,18 @@
 
  This example also shows the Fuel Gauge IC at address 0x36.
  */
-
+#include <Adafruit_TinyUSB.h>
 #include <Wire.h>
 
-int qwiicPower = PIN_QWIIC_PWR_EN; //Thing Plus C 0 is connected to the v-reg that controls the Qwiic power
+int qwiicPower = PIN_QWIIC_PEN; //Thing Plus C 0 is connected to the v-reg that controls the Qwiic power
 
 void setup()
 {
   Serial.begin(115200);
+  while(!Serial){
+    yield();
+  };
+  Serial.println("");
   Serial.println("I2C Scanner");
 
   pinMode(qwiicPower, OUTPUT);
