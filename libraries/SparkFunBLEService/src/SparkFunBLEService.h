@@ -33,6 +33,5 @@
 
 #include "services/SparkFunBLE_ISM330DHCX.h"
 #include "services/SparkFunBLE_BME280.h"
-#include "services/SparkFunBLE_RGB.h"
 
 #endif // _SPARKFUNBLESERVICE_H_
