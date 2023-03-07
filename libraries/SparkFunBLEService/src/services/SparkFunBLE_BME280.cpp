@@ -57,8 +57,52 @@ const uint8_t SparkFunBLE_BME280::UUID128_CHR_DATA[16] =
 SparkFunBLE_BME280::SparkFunBLE_BME280(void)
   : SparkFunBLE_Sensor(UUID128_SERVICE, UUID128_CHR_DATA)
 {
+  _temp = _press = _humidity = NULL;
+  _envSensor = NULL;
+  _envData = NULL;
+
   // Setup Measurement Characteristic
   _measurement.setProperties(CHR_PROPS_READ | CHR_PROPS_NOTIFY);
   _measurement.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
   _measurement.setFixedLen(4*3);
+}
+
+err_t SparkFunBLE_BME280::begin(BME280* sensor, BME280_SensorMeasurements* envData, uint16_t sensorID, int ms)
+{
+  _envSensor = sensor;
+  _envData = envData;
+  _temp = SparkFunBLE_BME280_Wrapper(sensor, _envData, TEMPERATURE, sensorID);
+  _press = SparkFunBLE_BME280_Wrapper(sensor, _envData, PRESSURE, sensorID + 1);
+  _humidity = SparkFunBLE_BME280_Wrapper(sensor, _envData, REL_H, sensorID + 2);
+
+  VERIFY_STATUS( SparkFunBLE_Sensor::_begin(ms) );
+
+  return ERROR_NONE;
+}
+
+// Notifiy BLE service
+void SparkFunBLE_BME280::_measure_handler(void)
+{
+  float env_data[3];
+
+  sensors_event_t temp_evt, press_evt, humid_evt;
+
+  _readSensor(_envSensor);
+
+  _temp->getEvent(&temp_evt);
+  _press->getEvent(&press_evt);
+  _humidity->getEvent(&humid_evt);
+
+  env_data[0] = temp_evt.temperature;
+  env_data[1] = press_evt.pressure;
+  env_data[2] = humid_evt.relative_humidity;
+
+  _measurement.notify(env_data, sizeof(env_data));
+}
+
+// Read in Sensor Data
+void SparkFunBLE_BME280::_readSensor(BME280* envSensor)
+{
+  while (envSensor.isMeasuring()){};
+  envSensor.readAllMeasurements(&_envData);
 }

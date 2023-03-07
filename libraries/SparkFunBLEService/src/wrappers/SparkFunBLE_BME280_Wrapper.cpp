@@ -24,9 +24,10 @@
 
 #include "SparkFunBLE_BME280_Wrapper.h"
 
-SparkFunBLE_BME280_Wrapper::SparkFunBLE_BME280_Wrapper(BME280 *envSensor, envDataType type, int32_t sensorID)
+SparkFunBLE_BME280_Wrapper::SparkFunBLE_BME280_Wrapper(BME280 *envSensor, BME280_SensorMeasurements* envData, envDataType type, int32_t sensorID)
 {
     _envSensor = envSensor;
+    _envData = envData;
     _envDataType = type;
     _sensorID = sensorID;
 }
@@ -39,9 +40,6 @@ SparkFunBLE_BME280_Wrapper::getEvent(sensors_event_t *event)
     event->version = sizeof(sensors_event_t);
     event->sensor_id = _sensorID;
     event->timestamp = 0;
-
-    while (envSensor.isMeasuring()){};
-    envSensor.readAllMeasurements(&envData);
 
     switch(_envDataType) {
         case TEMPERATURE:
