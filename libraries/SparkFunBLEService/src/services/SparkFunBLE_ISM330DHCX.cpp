@@ -1,7 +1,6 @@
-/* 
+/*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Ha Thach (tinyusb.org) for Adafruit Industries
  * Copyright (c) 2023 SparkFun Electronics
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,6 +23,7 @@
  */
 
 #include "SparkFunBLEService.h"
+#include "wrappers/SparkFunBLE_ISM330DHCX_Wrapper.h"
 
 //--------------------------------------------------------------------+
 // MACRO TYPEDEF CONSTANT ENUM DECLARATION
@@ -55,10 +55,46 @@ const uint8_t SparkFunBLE_ISM330DHCX::UUID128_CHR_DATA[16] =
 
 // Constructor
 SparkFunBLE_ISM330DHCX::SparkFunBLE_ISM330DHCX(void)
-  : SparkFunBLE_Sensor(UUID128_SERVICE, UUID128_CHR_DATA)
+    : SparkFunBLE_Sensor(UUID128_SERVICE, UUID128_CHR_DATA)
 {
+  _imuSensor = NULL;
+  _accel = _gyro = NULL;
+  
   // Setup Measurement Characteristic
   _measurement.setProperties(CHR_PROPS_READ | CHR_PROPS_NOTIFY);
   _measurement.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  _measurement.setFixedLen(4*6);
+  _measurement.setFixedLen(4 * 6); // 4-byte floats, 6 values
+}
+
+err_t SparkFunBLE_ISM330DHCX::begin(SparkFun_ISM330DHCX* sensor, uint16_t sensorID)
+{
+  _imuSensor = sensor;
+  _accel = SparkFunBLE_ISM330DHCX_Wrapper(_imuSensor, ACCELEROMETER, sensorID);
+  _gyro = SparkFunBLE_ISM330DHCX_Wrapper(_imuSensor, GYROSCOPE, sensorID + 1);
+
+  int32_t const period_ms = 100;
+
+  // Invoke base class begin(), this will add Service, Measurement, and Period Characteristics
+  VERIFY_STATUS( SparkFunBLE_Sensor::_begin(period_ms) );
+
+  return ERROR_NONE;
+}
+
+void SparkFunBLE_ISM330DHCX::_measure_handler(void)
+{
+  float imu_data[6];
+
+  sensors_event_t accel_evt, gyro_evt;
+
+  _accel->getEvent(&accel_evt);
+  _gyro->getEvent(&gyro_evt);
+
+  imu_data[0] = accel_evt.acceleration.x;
+  imu_data[1] = accel_evt.acceleration.y;
+  imu_data[2] = accel_evt.acceleration.z;
+  imu_data[3] = gyro_evt.gyro.x;
+  imu_data[4] = gyro_evt.gyro.y;
+  imu_data[5] = gyro_evt.gyro.z;
+
+  _measurement.notify(imu_data, sizeof(imu_data));
 }

@@ -28,26 +28,30 @@
 #include <SparkFun_ISM330DHCX.h>
 #include <Adafruit_Sensor.h>
 
+enum imuDataType {
+    ACCELEROMETER,
+    GYROSCOPE
+};
+
 /* Wraps the ISM330DHCX class in an Adafruit_Sensor class */
 class SparkFunBLE_ISM330DHCX_Wrapper : public Adafruit_Sensor
 {
-    public:
-        SparkFunBLE_ISM330DHCX_Wrapper(SparkFun_ISM330DHCX *imuSensor, bool dataTypeAccel = true, int32_t sensorID = -1);
+  public:
+    SparkFunBLE_ISM330DHCX_Wrapper(SparkFun_ISM330DHCX *imuSensor, imuDataType type = ACCELEROMETER, int32_t sensorID = -1);
 
-        bool getEvent(sensors_event_t *);
-        void getSensor(sensor_t *);
-    
-    protected:
-        SparkFun_ISM330DHCX *_imu;
+    bool getEvent(sensors_event_t *);
+    void getSensor(sensor_t *);
 
-        sfe_ism_data_t* sensorData;
-        bool _dataTypeAccel;
-    
-    private:
-        int32_t _sensorID;
+  private:
+    SparkFun_ISM330DHCX *_imu;
+    sfe_ism_data_t* _sensorData;
 
-        const float G_TO_MS2 = 9.80665;
-        const float DEG_TO_RAD = 0.017453;
+    imuDataType _imuDataType;
+
+    int32_t _sensorID;
+
+    const float G_TO_MS2 = 9.80665;
+    const float DEG_TO_RAD = 0.017453;
 }
 
 #endif // _SPARKFUNBLE_ISM330DHCX_WRAPPER_H_

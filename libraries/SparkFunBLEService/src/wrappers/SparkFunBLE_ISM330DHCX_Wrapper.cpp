@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License (MIT)
  *
  * Copyright (c) 2023 SparkFun Electronics
@@ -38,16 +38,19 @@ SparkFunBLE_ISM330DHCX_Wrapper::getEvent(sensors_event_t *event)
 
     event->version = sizeof(sensors_event_t);
     event->sensor_id = _sensorID;
-    event->type = SENSOR_TYPE_ACCELEROMETER;
     event->timestamp = 0;
-    
-    if(_dataTypeAccel) {
+
+    if (_dataTypeAccel)
+    {
+        event->type = SENSOR_TYPE_ACCELEROMETER;
         imu.getAccel(&sensorData);
         event->acceleration.x = sensorData.xData * G_TO_MS2;
         event->acceleration.y = sensorData.yData * G_TO_MS2;
         event->acceleration.z = sensorData.zData * G_TO_MS2;
     }
-    else {
+    else
+    {
+        event->type = SENSOR_TYPE_GYROSCOPE;
         imu.getGyro(&sensorData);
         event->gyro.x = sensorData.xData * DEG_TO_RAD;
         event->gyro.y = sensorData.yData * DEG_TO_RAD;
@@ -67,13 +70,16 @@ SparkFunBLE_ISM330DHCX_Wrapper::getSensor(sensor_t *sensor)
     sensor->name[sizeof(sensor->name) - 1] = 0;
     sensor->version = 1;
     sensor->sensorID = _sensorID;
-    if(_dataTypeAccel) {
+
+    if (_dataTypeAccel)
+    {
         sensor->type = SENSOR_TYPE_ACCELEROMETER;
         sensor->max_value = 156.9064F;   /* 16g = 156.9064 m/s/s */
         sensor->min_value = -156.9064F;  /* -16g = 156.9064 m/s/s */
         sensor->resolution = 0.0041384F; /* 0.422mg = 0.004138 m/s/s */
     }
-    else {
+    else
+    {
         sensor->type = SENSOR_TYPE_GYROSCOPE;
         sensor->max_value = 69.812F;     /* 4000 deg/s = 69.812 rad/s */
         sensor->min_value = -69.812F;    /* -4000 deg/s = 69.812 rad/s */

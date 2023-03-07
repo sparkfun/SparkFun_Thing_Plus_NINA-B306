@@ -1,7 +1,6 @@
-/* 
+/*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Ha Thach (tinyusb.org) for Adafruit Industries
  * Copyright (c) 2023 SparkFun Electronics
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,15 +25,27 @@
 #ifndef _SPARKFUNBLE_ISM330DHCX_H_
 #define _SPARKFUNBLE_ISM330DHCX_H_
 
+class SparkFun_ISM330DHCX;
+struct sfe_ism_data_t;
+
 class SparkFunBLE_ISM330DHCX : public SparkFunBLE_Sensor
 {
-    public:
-        static const uint8_t UUID128_SERVICE[16];
-        static const uint8_t UUID128_CHR_DATA[16];
+  public:
+    static const uint8_t UUID128_SERVICE[16];
+    static const uint8_t UUID128_CHR_ACCDATA[16];
 
-        SparkFunBLE_ISM330DHCX(void);
+    SparkFunBLE_ISM330DHCX(void);
+    err_t begin(SparkFun_ISM330DHCX* sensor, uint16_t sensorID = -2);
+    
+  protected:
+    void _measure_handler(void);
 
-        using SparkFunBLE_Sensor::begin;
+  private:
+    SparkFun_ISM330DHCX* _imuSensor;
+
+    Adafruit_Sensor* _accel;
+    Adafruit_Sensor* _gyro;
+
 };
 
 #endif // _SPARKFUNBLE_ISM330DHCX_H_
