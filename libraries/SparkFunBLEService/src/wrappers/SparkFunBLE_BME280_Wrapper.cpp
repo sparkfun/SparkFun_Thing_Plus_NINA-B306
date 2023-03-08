@@ -24,15 +24,14 @@
 
 #include "SparkFunBLE_BME280_Wrapper.h"
 
-SparkFunBLE_BME280_Wrapper::SparkFunBLE_BME280_Wrapper(BME280 *envSensor, BME280_SensorMeasurements* envData, envDataType type, int32_t sensorID)
+SparkFunBLE_BME280_Wrapper::SparkFunBLE_BME280_Wrapper(BME280* envSensor, envDataType type, int32_t sensorID)
 {
     _envSensor = envSensor;
-    _envData = envData;
     _envDataType = type;
     _sensorID = sensorID;
 }
 
-SparkFunBLE_BME280_Wrapper::getEvent(sensors_event_t *event)
+bool SparkFunBLE_BME280_Wrapper::getEvent(sensors_event_t *event)
 {
     /* Clear event */
     memset(event, 0, sizeof(sensors_event_t));
@@ -43,16 +42,16 @@ SparkFunBLE_BME280_Wrapper::getEvent(sensors_event_t *event)
 
     switch(_envDataType) {
         case TEMPERATURE:
-            event->type = SENSOR_TYPE_TEMPERATURE;
-            event->temperature = envData.temperature;
+            event->type = SENSOR_TYPE_AMBIENT_TEMPERATURE;
+            event->temperature = _envSensor->readTempC();
             break;
         case PRESSURE:
             event->type = SENSOR_TYPE_PRESSURE;
-            event->pressure = envData.pressure * PA_TO_HPA;
+            event->pressure = _envSensor->readFloatPressure() * PA_TO_HPA;
             break;
         case REL_H:
             event->type = SENSOR_TYPE_RELATIVE_HUMIDITY;
-            event->relative_humidity = envData.humidity;
+            event->relative_humidity = _envSensor->readFloatHumidity();
             break;
         default:
             break;
@@ -61,7 +60,7 @@ SparkFunBLE_BME280_Wrapper::getEvent(sensors_event_t *event)
     return true;
 }
 
-SparkFunBLE_BME280_Wrapper::getSensor(sensor_t *sensor)
+void SparkFunBLE_BME280_Wrapper::getSensor(sensor_t *sensor)
 {
     /* Clear the sensor_t object */
     memset(sensor, 0, sizeof(sensor_t));
@@ -70,11 +69,11 @@ SparkFunBLE_BME280_Wrapper::getSensor(sensor_t *sensor)
     strncpy(sensor->name, "BME280", sizeof(sensor->name) - 1);
     sensor->name[sizeof(sensor->name) - 1] = 0;
     sensor->version = 1;
-    sensor->sensorID = _sensorID;
+    sensor->sensor_id = _sensorID;
 
     switch(_envDataType) {
         case TEMPERATURE:
-            sensor->type = SENSOR_TYPE_TEMPERATURE;
+            sensor->type = SENSOR_TYPE_AMBIENT_TEMPERATURE;
             sensor->max_value = 65;
             sensor->min_value = 0;
             sensor->resolution = 1;
