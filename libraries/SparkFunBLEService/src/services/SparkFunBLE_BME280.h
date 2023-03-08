@@ -26,9 +26,11 @@
 #ifndef _SPARKFUNBLE_BME280_H_
 #define _SPARKFUNBLE_BME280_H_
 
+#include "SparkFunBLEService.h"
+#include "wrappers/SparkFunBLE_BME280_Wrapper.h"
+
 // Forward declarations
 class BME280;
-struct BME280_SensorMeasurements;
 
 class SparkFunBLE_BME280 : public SparkFunBLE_Sensor
 {
@@ -37,20 +39,17 @@ class SparkFunBLE_BME280 : public SparkFunBLE_Sensor
     static const uint8_t UUID128_CHR_DATA[16];
 
     SparkFunBLE_BME280(void);
-    err_t begin (BME280* sensor, BME280_SensorMeasurements* envData, uint16_t sensorID = -3, int ms = DEFAULT_PERIOD);
+    err_t begin (BME280* sensor, uint16_t sensorID = -3, int ms = DEFAULT_PERIOD);
 
   protected:
     void _measure_handler(void);
 
-    void _readSensor(BME280* envSensor);
-
   private:
     BME280* _envSensor;
-    BME280_SensorMeasurements* _envData;
 
-    Adafruit_Sensor* _temp;
-    Adafruit_Sensor* _press;
-    Adafruit_Sensor* _humidity;
+    SparkFunBLE_BME280_Wrapper* _temp;
+    SparkFunBLE_BME280_Wrapper* _press;
+    SparkFunBLE_BME280_Wrapper* _humidity;
 };
 
 #endif // _SPARKFUNBLE_BME280_H_
