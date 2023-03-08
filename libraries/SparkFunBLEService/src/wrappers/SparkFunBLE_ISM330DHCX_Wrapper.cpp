@@ -24,14 +24,14 @@
 
 #include "SparkFunBLE_ISM330DHCX_Wrapper.h"
 
-SparkFunBLE_ISM330DHCX_Wrapper::SparkFunBLE_ISM330DHCX_Wrapper(SparkFun_ISM330DHCX *imuSensor, bool dataTypeAccel, int32_t sensorID)
+SparkFunBLE_ISM330DHCX_Wrapper::SparkFunBLE_ISM330DHCX_Wrapper(SparkFun_ISM330DHCX *imuSensor, imuDataType type, int32_t sensorID)
 {
     _imu = imuSensor;
-    _dataTypeAccel = dataTypeAccel;
+    _imuDataType = type;
     _sensorID = sensorID;
 }
 
-SparkFunBLE_ISM330DHCX_Wrapper::getEvent(sensors_event_t *event)
+bool SparkFunBLE_ISM330DHCX_Wrapper::getEvent(sensors_event_t *event)
 {
     /* Clear event */
     memset(event, 0, sizeof(sensors_event_t));
@@ -40,27 +40,27 @@ SparkFunBLE_ISM330DHCX_Wrapper::getEvent(sensors_event_t *event)
     event->sensor_id = _sensorID;
     event->timestamp = 0;
 
-    if (_dataTypeAccel)
+    if (_imuDataType == ACCELEROMETER)
     {
         event->type = SENSOR_TYPE_ACCELEROMETER;
-        imu.getAccel(&sensorData);
-        event->acceleration.x = sensorData.xData * G_TO_MS2;
-        event->acceleration.y = sensorData.yData * G_TO_MS2;
-        event->acceleration.z = sensorData.zData * G_TO_MS2;
+        _imu->getAccel(&_sensorData);
+        event->acceleration.x = _sensorData.xData * G_TO_MS2;
+        event->acceleration.y = _sensorData.yData * G_TO_MS2;
+        event->acceleration.z = _sensorData.zData * G_TO_MS2;
     }
     else
     {
         event->type = SENSOR_TYPE_GYROSCOPE;
-        imu.getGyro(&sensorData);
-        event->gyro.x = sensorData.xData * DEG_TO_RAD;
-        event->gyro.y = sensorData.yData * DEG_TO_RAD;
-        event->gyro.z = sensorData.zData * DEG_TO_RAD;
+        _imu->getGyro(&_sensorData);
+        event->gyro.x = _sensorData.xData * DEG_TO_RAD;
+        event->gyro.y = _sensorData.yData * DEG_TO_RAD;
+        event->gyro.z = _sensorData.zData * DEG_TO_RAD;
     }
 
     return true;
 }
 
-SparkFunBLE_ISM330DHCX_Wrapper::getSensor(sensor_t *sensor)
+void SparkFunBLE_ISM330DHCX_Wrapper::getSensor(sensor_t *sensor)
 {
     /* Clear the sensor_t object */
     memset(sensor, 0, sizeof(sensor_t));
@@ -69,9 +69,9 @@ SparkFunBLE_ISM330DHCX_Wrapper::getSensor(sensor_t *sensor)
     strncpy(sensor->name, "ISM330DHCX", sizeof(sensor->name) - 1);
     sensor->name[sizeof(sensor->name) - 1] = 0;
     sensor->version = 1;
-    sensor->sensorID = _sensorID;
+    sensor->sensor_id = _sensorID;
 
-    if (_dataTypeAccel)
+    if (_imuDataType == ACCELEROMETER)
     {
         sensor->type = SENSOR_TYPE_ACCELEROMETER;
         sensor->max_value = 156.9064F;   /* 16g = 156.9064 m/s/s */

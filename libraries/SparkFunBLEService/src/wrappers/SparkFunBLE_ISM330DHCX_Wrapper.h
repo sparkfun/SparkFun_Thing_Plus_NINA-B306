@@ -43,15 +43,16 @@ class SparkFunBLE_ISM330DHCX_Wrapper : public Adafruit_Sensor
     void getSensor(sensor_t *);
 
   private:
-    SparkFun_ISM330DHCX *_imu;
-    sfe_ism_data_t* _sensorData;
+    SparkFun_ISM330DHCX* _imu;
+
+    sfe_ism_data_t _sensorData;
 
     imuDataType _imuDataType;
 
     int32_t _sensorID;
 
-    const float G_TO_MS2 = 9.80665;
-    const float DEG_TO_RAD = 0.017453;
-}
+    static constexpr float G_TO_MS2 = 9.80665;
+    static constexpr float D2RAD = 0.017453;
+};
 
 #endif // _SPARKFUNBLE_ISM330DHCX_WRAPPER_H_
