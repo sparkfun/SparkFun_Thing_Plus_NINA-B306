@@ -26,6 +26,7 @@
 #ifndef _SPARKFUNBLE_SENSOR_H_
 #define _SPARKFUNBLE_SENSOR_H_
 
+#include "BLEService.h"
 #include <Adafruit_Sensor.h>
 
 class SparkFunBLE_Sensor : public BLEService
