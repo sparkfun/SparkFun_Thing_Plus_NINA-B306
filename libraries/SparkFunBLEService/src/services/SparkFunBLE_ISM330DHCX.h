@@ -25,14 +25,16 @@
 #ifndef _SPARKFUNBLE_ISM330DHCX_H_
 #define _SPARKFUNBLE_ISM330DHCX_H_
 
+#include "SparkFunBLEService.h"
+#include "wrappers/SparkFunBLE_ISM330DHCX_Wrapper.h"
+
 class SparkFun_ISM330DHCX;
-struct sfe_ism_data_t;
 
 class SparkFunBLE_ISM330DHCX : public SparkFunBLE_Sensor
 {
   public:
     static const uint8_t UUID128_SERVICE[16];
-    static const uint8_t UUID128_CHR_ACCDATA[16];
+    static const uint8_t UUID128_CHR_DATA[16];
 
     SparkFunBLE_ISM330DHCX(void);
     err_t begin(SparkFun_ISM330DHCX* sensor, uint16_t sensorID = -2);
@@ -43,8 +45,8 @@ class SparkFunBLE_ISM330DHCX : public SparkFunBLE_Sensor
   private:
     SparkFun_ISM330DHCX* _imuSensor;
 
-    Adafruit_Sensor* _accel;
-    Adafruit_Sensor* _gyro;
+    SparkFunBLE_ISM330DHCX_Wrapper* _accel;
+    SparkFunBLE_ISM330DHCX_Wrapper* _gyro;
 
 };
 

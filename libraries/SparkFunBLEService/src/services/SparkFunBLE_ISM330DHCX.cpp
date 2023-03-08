@@ -23,7 +23,6 @@
  */
 
 #include "SparkFunBLEService.h"
-#include "wrappers/SparkFunBLE_ISM330DHCX_Wrapper.h"
 
 //--------------------------------------------------------------------+
 // MACRO TYPEDEF CONSTANT ENUM DECLARATION
@@ -68,9 +67,12 @@ SparkFunBLE_ISM330DHCX::SparkFunBLE_ISM330DHCX(void)
 
 err_t SparkFunBLE_ISM330DHCX::begin(SparkFun_ISM330DHCX* sensor, uint16_t sensorID)
 {
+  SparkFunBLE_ISM330DHCX_Wrapper accel  = SparkFunBLE_ISM330DHCX_Wrapper(_imuSensor, ACCELEROMETER, sensorID);
+  SparkFunBLE_ISM330DHCX_Wrapper gyro   = SparkFunBLE_ISM330DHCX_Wrapper(_imuSensor, GYROSCOPE, sensorID + 1);
+  
   _imuSensor = sensor;
-  _accel = SparkFunBLE_ISM330DHCX_Wrapper(_imuSensor, ACCELEROMETER, sensorID);
-  _gyro = SparkFunBLE_ISM330DHCX_Wrapper(_imuSensor, GYROSCOPE, sensorID + 1);
+  _accel = &accel;
+  _gyro = &gyro;
 
   int32_t const period_ms = 100;
 
