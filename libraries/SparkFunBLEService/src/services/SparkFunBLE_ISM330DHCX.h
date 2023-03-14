@@ -37,7 +37,7 @@ class SparkFunBLE_ISM330DHCX : public SparkFunBLE_Sensor
     static const uint8_t UUID128_CHR_DATA[16];
 
     SparkFunBLE_ISM330DHCX(void);
-    err_t begin(SparkFun_ISM330DHCX* sensor, uint16_t sensorID = -2);
+    err_t begin(Adafruit_USBD_CDC* Serial, SparkFun_ISM330DHCX* sensor, uint16_t sensorID = -2);
     
   protected:
     void _measure_handler(void);
@@ -47,7 +47,7 @@ class SparkFunBLE_ISM330DHCX : public SparkFunBLE_Sensor
 
     SparkFunBLE_ISM330DHCX_Wrapper* _accel;
     SparkFunBLE_ISM330DHCX_Wrapper* _gyro;
-
+    Adafruit_USBD_CDC* _Serial;
 };
 
 #endif // _SPARKFUNBLE_ISM330DHCX_H_

@@ -59,6 +59,7 @@ SparkFunBLE_BME280::SparkFunBLE_BME280(void)
 {
   _envSensor = NULL;
   _temp = _press = _humidity = NULL;
+  _Serial = NULL;
 
   // Setup Measurement Characteristic
   _measurement.setProperties(CHR_PROPS_READ | CHR_PROPS_NOTIFY);
@@ -66,18 +67,24 @@ SparkFunBLE_BME280::SparkFunBLE_BME280(void)
   _measurement.setFixedLen(4*3);
 }
 
-err_t SparkFunBLE_BME280::begin(BME280* sensor, uint16_t sensorID, int ms)
+err_t SparkFunBLE_BME280::begin(Adafruit_USBD_CDC* Serial, BME280* sensor, uint16_t sensorID, int ms)
 {
-  SparkFunBLE_BME280_Wrapper temp = SparkFunBLE_BME280_Wrapper(sensor, TEMPERATURE, sensorID);
-  SparkFunBLE_BME280_Wrapper press = SparkFunBLE_BME280_Wrapper(sensor, PRESSURE, sensorID + 1);
-  SparkFunBLE_BME280_Wrapper humidity = SparkFunBLE_BME280_Wrapper(sensor, REL_H, sensorID + 2);
-  
+  _Serial = Serial;
   _envSensor = sensor;
+  
+  SparkFunBLE_BME280_Wrapper temp = SparkFunBLE_BME280_Wrapper(_Serial, _envSensor, TEMPERATURE, sensorID);
+  SparkFunBLE_BME280_Wrapper press = SparkFunBLE_BME280_Wrapper(_Serial, _envSensor, PRESSURE, sensorID + 1);
+  SparkFunBLE_BME280_Wrapper humidity = SparkFunBLE_BME280_Wrapper(_Serial, _envSensor, REL_H, sensorID + 2);
+  
   _temp = &temp;
   _press = &press;
   _humidity = &humidity;
 
   VERIFY_STATUS( SparkFunBLE_Sensor::_begin(ms) );
+
+  _Serial->println(F("BME280 BLE Service completed begin successfully."));
+  _Serial->println(F("Running initial measure handler for ENV data verification."));
+  _measure_handler();
 
   return ERROR_NONE;
 }
@@ -85,6 +92,7 @@ err_t SparkFunBLE_BME280::begin(BME280* sensor, uint16_t sensorID, int ms)
 // Notifiy BLE service
 void SparkFunBLE_BME280::_measure_handler(void)
 {
+  _Serial->println(F("BME280 Measure handler entry."));
   float env_data[3];
 
   sensors_event_t temp_evt, press_evt, humid_evt;
@@ -97,5 +105,9 @@ void SparkFunBLE_BME280::_measure_handler(void)
   env_data[1] = press_evt.pressure;
   env_data[2] = humid_evt.relative_humidity;
 
+  _Serial->println(F("BME280 Current Data:"));
+  _Serial->println("Temp: "+String(env_data[0])+", Pressure: "+String(env_data[1])+", Humidity: "+String(env_data[2]));
+
   _measurement.notify(env_data, sizeof(env_data));
+  _Serial->println(F("BME280 Measure handler exit."));
 }

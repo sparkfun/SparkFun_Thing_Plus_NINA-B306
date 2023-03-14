@@ -65,12 +65,14 @@ SparkFunBLE_ISM330DHCX::SparkFunBLE_ISM330DHCX(void)
   _measurement.setFixedLen(4 * 6); // 4-byte floats, 6 values
 }
 
-err_t SparkFunBLE_ISM330DHCX::begin(SparkFun_ISM330DHCX* sensor, uint16_t sensorID)
+err_t SparkFunBLE_ISM330DHCX::begin(Adafruit_USBD_CDC* Serial, SparkFun_ISM330DHCX* sensor, uint16_t sensorID)
 {
-  SparkFunBLE_ISM330DHCX_Wrapper accel  = SparkFunBLE_ISM330DHCX_Wrapper(_imuSensor, ACCELEROMETER, sensorID);
-  SparkFunBLE_ISM330DHCX_Wrapper gyro   = SparkFunBLE_ISM330DHCX_Wrapper(_imuSensor, GYROSCOPE, sensorID + 1);
-  
+  _Serial = Serial;
   _imuSensor = sensor;
+  
+  SparkFunBLE_ISM330DHCX_Wrapper accel  = SparkFunBLE_ISM330DHCX_Wrapper(_Serial, _imuSensor, ACCELEROMETER, sensorID);
+  SparkFunBLE_ISM330DHCX_Wrapper gyro   = SparkFunBLE_ISM330DHCX_Wrapper(_Serial, _imuSensor, GYROSCOPE, sensorID + 1);
+
   _accel = &accel;
   _gyro = &gyro;
 
@@ -78,25 +80,36 @@ err_t SparkFunBLE_ISM330DHCX::begin(SparkFun_ISM330DHCX* sensor, uint16_t sensor
 
   // Invoke base class begin(), this will add Service, Measurement, and Period Characteristics
   VERIFY_STATUS( SparkFunBLE_Sensor::_begin(period_ms) );
+  _Serial->println(F("BME280 BLE Service completed begin successfully."));
+  _Serial->println(F("Running initial measure handler for IMU data verification..."));
+  _measure_handler();
 
   return ERROR_NONE;
 }
 
 void SparkFunBLE_ISM330DHCX::_measure_handler(void)
 {
-  float imu_data[6];
+  _Serial->println(F("ISM330DHCX Measure handler entry."));
+  float tmp_data[3];
+  float imu_data[3];
 
   sensors_event_t accel_evt, gyro_evt;
 
   _accel->getEvent(&accel_evt);
   _gyro->getEvent(&gyro_evt);
 
-  imu_data[0] = accel_evt.acceleration.x;
-  imu_data[1] = accel_evt.acceleration.y;
-  imu_data[2] = accel_evt.acceleration.z;
-  imu_data[3] = gyro_evt.gyro.x;
-  imu_data[4] = gyro_evt.gyro.y;
-  imu_data[5] = gyro_evt.gyro.z;
+  
+  tmp_data[0] = accel_evt.acceleration.x;
+  tmp_data[1] = accel_evt.acceleration.y;
+  tmp_data[2] = accel_evt.acceleration.z;
+  memcpy(imu_data, tmp_data, sizeof(imu_data));
+  // imu_data[3] = gyro_evt.gyro.x;
+  // imu_data[4] = gyro_evt.gyro.y;
+  // imu_data[5] = gyro_evt.gyro.z;
+
+  // _Serial->println(F("ISM330DHCX Current Data:"));
+  // _Serial->println("Ax: "+String(imu_data[0],2)+", Ay: "+String(imu_data[1])+", Az: "+String(imu_data[2])); //+", Gx: "+String(imu_data[3])+", Gy: "+String(imu_data[4])+", Gz: "+String(imu_data[5]));
 
   _measurement.notify(imu_data, sizeof(imu_data));
+  _Serial->println(F("ISM330DHCX Measure handler exit."));
 }

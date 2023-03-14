@@ -26,8 +26,10 @@
 #ifndef _SPARKFUNBLE_SENSOR_H_
 #define _SPARKFUNBLE_SENSOR_H_
 
-#include "BLEService.h"
+#include "SparkFunBLEService.h"
 #include <Adafruit_Sensor.h>
+
+extern const uint8_t UUID128_CHR_SFE_MEASUREMENT_PERIOD[16];
 
 class SparkFunBLE_Sensor : public BLEService
 {

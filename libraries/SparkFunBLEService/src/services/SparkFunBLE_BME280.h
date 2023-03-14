@@ -39,7 +39,7 @@ class SparkFunBLE_BME280 : public SparkFunBLE_Sensor
     static const uint8_t UUID128_CHR_DATA[16];
 
     SparkFunBLE_BME280(void);
-    err_t begin (BME280* sensor, uint16_t sensorID = -3, int ms = DEFAULT_PERIOD);
+    err_t begin (Adafruit_USBD_CDC* Serial, BME280* sensor, uint16_t sensorID = -3, int ms = DEFAULT_PERIOD);
 
   protected:
     void _measure_handler(void);
@@ -50,6 +50,7 @@ class SparkFunBLE_BME280 : public SparkFunBLE_Sensor
     SparkFunBLE_BME280_Wrapper* _temp;
     SparkFunBLE_BME280_Wrapper* _press;
     SparkFunBLE_BME280_Wrapper* _humidity;
+    Adafruit_USBD_CDC* _Serial;
 };
 
 #endif // _SPARKFUNBLE_BME280_H_

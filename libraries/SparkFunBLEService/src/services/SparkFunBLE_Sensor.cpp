@@ -29,8 +29,23 @@
 // MACRO TYPEDEF CONSTANT ENUM DECLARATION
 //--------------------------------------------------------------------+
 
+/* All SparkFun Service/Characteristic UUID128 share the same Base UUID:
+ *    5FE0xxxx-005E-4761-9A7E-947AA3C505FE
+ *
+ * Shared Characteristics
+ *  - Measurement Period  0001 | int32_t | Read + Write |
+ *    ms between measurements, -1: stop reading, 0: update when changes
+ */
+
+const uint8_t UUID128_CHR_SFE_MEASUREMENT_PERIOD[16] = 
+{
+  0xFE, 0x05, 0xC5, 0xA3, 0x7A, 0x94, 0x7E, 0x9A,
+  0x61, 0x47, 0x5E, 0x00, 0x01, 0x00, 0xE0, 0x5F
+};
+
+
 SparkFunBLE_Sensor::SparkFunBLE_Sensor(BLEUuid service_uuid, BLEUuid data_uuid)
-  : BLEService(service_uuid), _measurement(data_uuid), _period(UUID128_CHR_ADAFRUIT_MEASUREMENT_PERIOD)
+  : BLEService(service_uuid), _measurement(data_uuid), _period(UUID128_CHR_SFE_MEASUREMENT_PERIOD)
 {
   _sensor = NULL;
   _measure_cb = NULL;

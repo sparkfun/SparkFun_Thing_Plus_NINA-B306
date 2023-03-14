@@ -30,6 +30,7 @@
 #include "BLECharacteristic.h"
 #include "BLEService.h"
 #include "services/SparkFunBLE_Sensor.h"
+#include <Adafruit_TinyUSB.h>
 
 #include "services/SparkFunBLE_ISM330DHCX.h"
 #include "services/SparkFunBLE_BME280.h"
