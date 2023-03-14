@@ -8,7 +8,7 @@
   The sensor service contains the following characteristics:
   Acceleration X,Y,Z
   Gyro X,Y,Z
-  Temperature (C), Humidity, Pressure
+  Temperature (degC), Humidity, Pressure
 
   MIT License
 
@@ -34,51 +34,42 @@
 
 #include <Wire.h>
 #include <Adafruit_TinyUSB.h>
+
 #include <SparkFunBME280.h>
 #include <SparkFun_ISM330DHCX.h>
 #include <SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library.h>
 
 #include "bluefruit.h"
+#include "SparkFunBLEService.h"
+#include "services/SparkFunBLE_ISM330DHCX.h"
+#include "services/SparkFunBLE_BME280.h"
+
 
 /* Battery Monitor */
-SFE_MAX1704X lipo(MAX1704X_MAX17048);
+SFE_MAX1704X              lipo(MAX1704X_MAX17048);
 
 /* BME280 Environmental Sensor */
-BME280 envSensor;
-BME280_SensorMeasurements envData;
+BME280                    envSensor;
 
 /* ISM330DHCX 6-DoF IMU Sensor */
-SparkFun_ISM330DHCX imuSensor;
+SparkFun_ISM330DHCX       imuSensor;
+sfe_ism_data_t _sensorData;
 
-/* BLE Data Pipe Service Definition
- * 
- * 
- */
-BLEService        imus = BLEService();
-BLECharacteristic acxc = BLECharacteristic();
-BLECharacteristic acyc = BLECharacteristic();
-BLECharacteristic aczc = BLECharacteristic();
-BLECharacteristic gyxc = BLECharacteristic();
-BLECharacteristic gyyc = BLECharacteristic();
-BLECharacteristic gyzc = BLECharacteristic();
+/* IMU BLE Service */
+SparkFunBLE_ISM330DHCX    bleIMU;
 
-BLEService        envs = BLEService();
-BLECharacteristic tmpc = BLECharacteristic();
-BLECharacteristic prsc = BLECharacteristic();
-BLECharacteristic humc = BLECharacteristic();
+/* ENV BLE Service */
+SparkFunBLE_BME280        bleENV;
 
 /* BLE Device Information
  * Name - Thing Plus NINA-B306 Data Pipe
  * Manufacturer - SparkFun Electronics
  * Model - SparkFun Thing Plus NINA-B306
  */
-BLEDis bledis;
+BLEDis                    bledis;
 
 /* BLE Battery Service helper class */
-BLEBas blebas;
-
-sfe_ism_data_t accelData;
-sfe_ism_data_t gyroData;
+BLEBas                    blebas;
 
 long previousMillis = 0;
 
@@ -100,6 +91,7 @@ void setup() {
 
   //Initialize BLE things
   Bluefruit.begin();
+  Bluefruit.setTxPower(8); // +8 dBm, max power.
   Bluefruit.setName("Data Pipe Example");
 
   // Configure and start Device Information Service
@@ -116,11 +108,15 @@ void setup() {
   blebas.write(100);
 
   // Configure and start BLE Environmental Sensor Service
-  Serial.println(F("Configuring the Environmental Sensor Service..."));
+  // Make sure to give enough room between sensor IDs, the BME280 uses 3 IDs.
+  // Serial.println(F("Configuring the Environmental Sensor Service..."));
+  // bleENV.begin(&Serial, &envSensor, 100); // Sensor, ID.
 
 
   // Configure and start the IMU Sensor Service
+  // Make sure to give enough room between sensor IDs, the IMU uses 2 IDs.
   Serial.println(F("Configuring the IMU Data Service..."));
+  bleIMU.begin(&Serial, &imuSensor, 200); // Sensor, ID.
   
 
   Serial.println(F("Setup complete."));
@@ -136,38 +132,23 @@ void setup() {
 }
 
 void loop() {
-  
-  // // String(accelData.xData)+","+String(accelData.yData)+","+String(accelData.zData)
-  // // Wait for BLE central
-  // BLEDevice central = BLE.central();
-
-  // if (central) {
-  //   Serial.print("Connected to central: ");
-
-  //   Serial.println(central.address());
-  //   digitalWrite(LED_BUILTIN, HIGH);
-
-  //   while (central.connected()) {
-  //     long currentMillis = millis();
-
-  //     if (currentMillis - previousMillis >=200) {
-  //       previousMillis = currentMillis;
-  //       readSensors();
-  //     }
-  //   }
-
-  //   digitalWrite(LED_BUILTIN, LOW);
-  //   Serial.print("Disconnected from central: ");
-  //   Serial.println(central.address());    
-  // }
+  // while(!imuSensor.checkStatus()){}
+  // imuSensor.getAccel(&_sensorData);
+  // Serial.print("Ax: ");
+  // Serial.println(_sensorData.xData);
+  // Serial.print("Ay: ");
+  // Serial.println(_sensorData.yData);
+  // Serial.print("Az: ");
+  // Serial.println(_sensorData.zData);
 }
 
 void startAdv() {
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
 
-  // Add services
-  //Bluefruit.Advertising.addService();
+  // // Add services
+  // Bluefruit.Advertising.addService(bleENV);
+  // Bluefruit.Advertising.addService(bleIMU);
 
   Bluefruit.ScanResponse.addName();
 
