@@ -27,6 +27,7 @@
 
 #include <SparkFun_ISM330DHCX.h>
 #include <Adafruit_Sensor.h>
+#include <Adafruit_TinyUSB.h>
 
 enum imuDataType {
     ACCELEROMETER,
@@ -37,7 +38,7 @@ enum imuDataType {
 class SparkFunBLE_ISM330DHCX_Wrapper : public Adafruit_Sensor
 {
   public:
-    SparkFunBLE_ISM330DHCX_Wrapper(SparkFun_ISM330DHCX *imuSensor, imuDataType type = ACCELEROMETER, int32_t sensorID = -1);
+    SparkFunBLE_ISM330DHCX_Wrapper(Adafruit_USBD_CDC* Serial, SparkFun_ISM330DHCX *imuSensor, imuDataType type = ACCELEROMETER, int32_t sensorID = -1);
 
     bool getEvent(sensors_event_t *);
     void getSensor(sensor_t *);
@@ -51,8 +52,9 @@ class SparkFunBLE_ISM330DHCX_Wrapper : public Adafruit_Sensor
 
     int32_t _sensorID;
 
-    static constexpr float G_TO_MS2 = 9.80665;
+    static constexpr float G_TO_MS2 = 0.0098067;
     static constexpr float D2RAD = 0.017453;
+    Adafruit_USBD_CDC* _Serial;
 };
 
 #endif // _SPARKFUNBLE_ISM330DHCX_WRAPPER_H_
