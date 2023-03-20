@@ -37,17 +37,30 @@ class SparkFunBLE_ISM330DHCX : public SparkFunBLE_Sensor
     static const uint8_t UUID128_CHR_DATA[16];
 
     SparkFunBLE_ISM330DHCX(void);
-    err_t begin(Adafruit_USBD_CDC* Serial, SparkFun_ISM330DHCX* sensor, uint16_t sensorID = -2);
+    err_t begin(SparkFun_ISM330DHCX* sensor, uint16_t sensorID = -2);
+
+    void setPeriod(int period_ms);
     
   protected:
-    void _measure_handler(void);
+    err_t _begin(uint32_t ms);
 
-  private:
-    SparkFun_ISM330DHCX* _imuSensor;
+    SparkFun_ISM330DHCX* _imuSensorPtr;
 
     SparkFunBLE_ISM330DHCX_Wrapper* _accel;
     SparkFunBLE_ISM330DHCX_Wrapper* _gyro;
-    Adafruit_USBD_CDC* _Serial;
+
+    measure_callback_t _measure_cb;
+    notify_callback_t _notify_cb;
+
+    SoftwareTimer _timer;
+
+    void _update_timer(int32_t ms);
+    void _measure_handler(void);
+    void _notify_handler(uint16_t conn_hdl, uint16_t value);
+
+    static void sensor_timer_cb(TimerHandle_t xTimer);
+    static void sensor_period_write_cb(uint16_t conn_hdl, BLECharacteristic* chr, uint8_t* data, uint16_t len);
+    static void sensor_data_cccd_cb(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t value);
 };
 
 #endif // _SPARKFUNBLE_ISM330DHCX_H_

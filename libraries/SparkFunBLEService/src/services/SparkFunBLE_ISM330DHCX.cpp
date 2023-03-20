@@ -23,6 +23,7 @@
  */
 
 #include "SparkFunBLEService.h"
+#include <Arduino.h>
 
 //--------------------------------------------------------------------+
 // MACRO TYPEDEF CONSTANT ENUM DECLARATION
@@ -40,23 +41,20 @@
  *  - Measurement Period  0001
  */
 
-const uint8_t SparkFunBLE_ISM330DHCX::UUID128_SERVICE[16] =
-{
+const uint8_t SparkFunBLE_ISM330DHCX::UUID128_SERVICE[16] = {
   0xFE, 0x05, 0xC5, 0xA3, 0x7A, 0x94, 0x7E, 0x9A,
   0x61, 0x47, 0x5E, 0x00, 0x00, 0x02, 0xE0, 0x5F
 };
 
-const uint8_t SparkFunBLE_ISM330DHCX::UUID128_CHR_DATA[16] = 
-{
+const uint8_t SparkFunBLE_ISM330DHCX::UUID128_CHR_DATA[16] = {
   0xFE, 0x05, 0xC5, 0xA3, 0x7A, 0x94, 0x7E, 0x9A,
   0x61, 0x47, 0x5E, 0x00, 0x01, 0x02, 0xE0, 0x5F
 };
 
 // Constructor
 SparkFunBLE_ISM330DHCX::SparkFunBLE_ISM330DHCX(void)
-    : SparkFunBLE_Sensor(UUID128_SERVICE, UUID128_CHR_DATA)
-{
-  _imuSensor = NULL;
+    : SparkFunBLE_Sensor(UUID128_SERVICE, UUID128_CHR_DATA) { 
+  _imuSensorPtr = NULL;
   _accel = _gyro = NULL;
   
   // Setup Measurement Characteristic
@@ -65,51 +63,143 @@ SparkFunBLE_ISM330DHCX::SparkFunBLE_ISM330DHCX(void)
   _measurement.setFixedLen(4 * 6); // 4-byte floats, 6 values
 }
 
-err_t SparkFunBLE_ISM330DHCX::begin(Adafruit_USBD_CDC* Serial, SparkFun_ISM330DHCX* sensor, uint16_t sensorID)
-{
-  _Serial = Serial;
-  _imuSensor = sensor;
-  
-  SparkFunBLE_ISM330DHCX_Wrapper accel  = SparkFunBLE_ISM330DHCX_Wrapper(_Serial, _imuSensor, ACCELEROMETER, sensorID);
-  SparkFunBLE_ISM330DHCX_Wrapper gyro   = SparkFunBLE_ISM330DHCX_Wrapper(_Serial, _imuSensor, GYROSCOPE, sensorID + 1);
+err_t SparkFunBLE_ISM330DHCX::begin(SparkFun_ISM330DHCX* sensor, uint16_t sensorID) {
+  _imuSensorPtr = sensor;
+
+  static SparkFunBLE_ISM330DHCX_Wrapper accel  = SparkFunBLE_ISM330DHCX_Wrapper(_imuSensorPtr, ACCELEROMETER, sensorID);
+  static SparkFunBLE_ISM330DHCX_Wrapper gyro   = SparkFunBLE_ISM330DHCX_Wrapper(_imuSensorPtr, GYROSCOPE, sensorID + 1);
 
   _accel = &accel;
   _gyro = &gyro;
 
-  int32_t const period_ms = 100;
+  const uint32_t period_ms = 500;
 
   // Invoke base class begin(), this will add Service, Measurement, and Period Characteristics
-  VERIFY_STATUS( SparkFunBLE_Sensor::_begin(period_ms) );
-  _Serial->println(F("BME280 BLE Service completed begin successfully."));
-  _Serial->println(F("Running initial measure handler for IMU data verification..."));
-  _measure_handler();
+  VERIFY_STATUS( _begin(period_ms) );
 
   return ERROR_NONE;
 }
 
-void SparkFunBLE_ISM330DHCX::_measure_handler(void)
-{
-  _Serial->println(F("ISM330DHCX Measure handler entry."));
-  float tmp_data[3];
-  float imu_data[3];
+err_t SparkFunBLE_ISM330DHCX::_begin(uint32_t ms) {
+  // Invoke base class begin()
+  VERIFY_STATUS( BLEService::begin() );
 
-  sensors_event_t accel_evt, gyro_evt;
+  _measurement.setCccdWriteCallback(sensor_data_cccd_cb, true);
+  VERIFY_STATUS( _measurement.begin() );
+  _measurement.write32(0); // zero 4 bytes could help to init some services
 
-  _accel->getEvent(&accel_evt);
-  _gyro->getEvent(&gyro_evt);
+  _period.setProperties(CHR_PROPS_READ | CHR_PROPS_WRITE);
+  _period.setPermission(SECMODE_OPEN, SECMODE_OPEN);
+  _period.setFixedLen(4);
+  VERIFY_STATUS( _period.begin() );
+  _period.write32(ms);
 
+  _period.setWriteCallback(sensor_period_write_cb, true);
+
+  // setup timer
+  _timer.begin(ms, sensor_timer_cb, this, true);
+
+  return ERROR_NONE;
+}
+
+void SparkFunBLE_ISM330DHCX::setPeriod(int period_ms) {
+  if( period_ms > 100 ){
+    _period.write32(period_ms);
+    _update_timer(period_ms);
+  }
+}
+
+void SparkFunBLE_ISM330DHCX::_update_timer(int32_t ms) {
+  if ( ms < 0 ) {
+    _timer.stop();
+  }
+  else if ( ms > 0 ) {
+    _timer.setPeriod(ms);
+  }
+  else {
+    // Period = 0: keep the current interval, but report on changes only
+  }
+}
+
+void SparkFunBLE_ISM330DHCX::_measure_handler(void) {
+  uint16_t len = _measurement.getMaxLen();
+  uint8_t imu_data[len];
   
-  tmp_data[0] = accel_evt.acceleration.x;
-  tmp_data[1] = accel_evt.acceleration.y;
-  tmp_data[2] = accel_evt.acceleration.z;
-  memcpy(imu_data, tmp_data, sizeof(imu_data));
-  // imu_data[3] = gyro_evt.gyro.x;
-  // imu_data[4] = gyro_evt.gyro.y;
-  // imu_data[5] = gyro_evt.gyro.z;
+  if(_imuSensorPtr && _measurement.isFixedLen()) {
+    sensors_event_t accel_evt, gyro_evt;
 
-  // _Serial->println(F("ISM330DHCX Current Data:"));
-  // _Serial->println("Ax: "+String(imu_data[0],2)+", Ay: "+String(imu_data[1])+", Az: "+String(imu_data[2])); //+", Gx: "+String(imu_data[3])+", Gy: "+String(imu_data[4])+", Gz: "+String(imu_data[5]));
+    _accel->getEvent(&accel_evt);
+    _gyro->getEvent(&gyro_evt);
+
+    uint16_t offset = 0;
+    memcpy(imu_data + offset, (const void*) &accel_evt.acceleration.x, sizeof(float));
+    offset += sizeof(float);
+    memcpy(imu_data + offset, (const void*) &accel_evt.acceleration.y, sizeof(float));
+    offset += sizeof(float);
+    memcpy(imu_data + offset, (const void*) &accel_evt.acceleration.z, sizeof(float));
+    offset += sizeof(float);
+    memcpy(imu_data + offset, (const void*) &gyro_evt.gyro.x, sizeof(float));
+    offset += sizeof(float);
+    memcpy(imu_data + offset, (const void*) &gyro_evt.gyro.y, sizeof(float));
+    offset += sizeof(float);
+    memcpy(imu_data + offset, (const void*) &gyro_evt.gyro.z, sizeof(float));
+  }
+  else if (_measure_cb) {
+    len = _measure_cb((uint8_t*)imu_data, sizeof(imu_data));
+    len = min(len, sizeof(imu_data));
+  }
+  else {
+    return;
+  }
+
+  if (!len){
+    return;
+  }
+
+  if ( 0 == _period.read32() ) {
+    uint8_t prev_buf[_measurement.getMaxLen()];
+    _measurement.read(prev_buf, sizeof(prev_buf));
+
+    // skip notify if there is no changes
+    if ( 0 == memcmp(prev_buf, imu_data, len) ) return;
+  }
 
   _measurement.notify(imu_data, sizeof(imu_data));
-  _Serial->println(F("ISM330DHCX Measure handler exit."));
+}
+
+void SparkFunBLE_ISM330DHCX::_notify_handler(uint16_t conn_hdl, uint16_t value) {
+  if (value & BLE_GATT_HVX_NOTIFICATION) {
+    _timer.start();
+  }
+  else {
+    _timer.stop();
+  }
+
+  if (_notify_cb) _notify_cb(conn_hdl, value);
+
+  // send initial notification if period = 0
+  if ( 0 == _period.read32() ) {
+    _measure_handler();
+    // _measurement.notify();
+  }
+}
+
+void SparkFunBLE_ISM330DHCX::sensor_timer_cb(TimerHandle_t xTimer) {
+  SparkFunBLE_ISM330DHCX* svc = (SparkFunBLE_ISM330DHCX*) pvTimerGetTimerID(xTimer);
+  svc->_measure_handler();
+}
+
+void SparkFunBLE_ISM330DHCX::sensor_period_write_cb(uint16_t conn_hdl, BLECharacteristic* chr, uint8_t* data, uint16_t len) {
+  (void) conn_hdl;
+  SparkFunBLE_ISM330DHCX* svc = (SparkFunBLE_ISM330DHCX*) &chr->parentService();
+  int32_t ms = 0;
+  memcpy(&ms, data, len);
+  
+  svc->_update_timer(ms);
+}
+
+void SparkFunBLE_ISM330DHCX::sensor_data_cccd_cb(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t value) {
+  SparkFunBLE_ISM330DHCX* svc = (SparkFunBLE_ISM330DHCX*) &chr->parentService();
+  
+  svc->_notify_handler(conn_hdl, value);
 }
