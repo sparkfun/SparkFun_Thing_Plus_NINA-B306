@@ -37,23 +37,20 @@
  *    ms between measurements, -1: stop reading, 0: update when changes
  */
 
-const uint8_t UUID128_CHR_SFE_MEASUREMENT_PERIOD[16] = 
-{
+const uint8_t UUID128_CHR_SFE_MEASUREMENT_PERIOD[16] = {
   0xFE, 0x05, 0xC5, 0xA3, 0x7A, 0x94, 0x7E, 0x9A,
   0x61, 0x47, 0x5E, 0x00, 0x01, 0x00, 0xE0, 0x5F
 };
 
 
 SparkFunBLE_Sensor::SparkFunBLE_Sensor(BLEUuid service_uuid, BLEUuid data_uuid)
-  : BLEService(service_uuid), _measurement(data_uuid), _period(UUID128_CHR_SFE_MEASUREMENT_PERIOD)
-{
+  : BLEService(service_uuid), _measurement(data_uuid), _period(UUID128_CHR_SFE_MEASUREMENT_PERIOD) {
   _sensor = NULL;
   _measure_cb = NULL;
   _notify_cb = NULL;
 }
 
-err_t SparkFunBLE_Sensor::_begin(int ms)
-{
+err_t SparkFunBLE_Sensor::_begin(int ms) {
   // Invoke base class begin()
   VERIFY_STATUS( BLEService::begin() );
 
@@ -75,40 +72,33 @@ err_t SparkFunBLE_Sensor::_begin(int ms)
   return ERROR_NONE;
 }
 
-err_t SparkFunBLE_Sensor::begin(measure_callback_t fp, int ms)
-{
+err_t SparkFunBLE_Sensor::begin(measure_callback_t fp, int ms) {
   _measure_cb = fp;
   return _begin(ms);
 }
 
-err_t SparkFunBLE_Sensor::begin(Adafruit_Sensor* sensor, int ms)
-{
+err_t SparkFunBLE_Sensor::begin(Adafruit_Sensor* sensor, int ms) {
   _sensor = sensor;
   return _begin(ms);
 }
 
-void SparkFunBLE_Sensor::setPeriod(int period_ms)
-{
+void SparkFunBLE_Sensor::setPeriod(int period_ms) {
   _period.write32(period_ms);
   _update_timer(period_ms);
 }
 
-void SparkFunBLE_Sensor::setNotifyCallback(notify_callback_t fp)
-{
+void SparkFunBLE_Sensor::setNotifyCallback(notify_callback_t fp) {
   _notify_cb = fp;
 }
 
 //--------------------------------------------------------------------+
 // Internal API
 //--------------------------------------------------------------------+
-void SparkFunBLE_Sensor::_notify_handler(uint16_t conn_hdl, uint16_t value)
-{
+void SparkFunBLE_Sensor::_notify_handler(uint16_t conn_hdl, uint16_t value) {
   // notify enabled
-  if (value & BLE_GATT_HVX_NOTIFICATION)
-  {
+  if (value & BLE_GATT_HVX_NOTIFICATION) {
     _timer.start();
-  }else
-  {
+  } else {
     _timer.stop();
   }
 
@@ -122,41 +112,33 @@ void SparkFunBLE_Sensor::_notify_handler(uint16_t conn_hdl, uint16_t value)
   //  }
 }
 
-void SparkFunBLE_Sensor::_update_timer(int32_t ms)
-{
-  if ( ms < 0 )
-  {
+void SparkFunBLE_Sensor::_update_timer(int32_t ms) {
+  if ( ms < 0 ) {
     _timer.stop();
-  }else if ( ms > 0)
-  {
+  } else if ( ms > 0) {
     _timer.setPeriod(ms);
-  }else
-  {
+  } else {
     // Period = 0: keeping the current interval, but report on changes only
   }
 }
 
-void SparkFunBLE_Sensor::_measure_handler(void)
-{
+void SparkFunBLE_Sensor::_measure_handler(void) {
   uint16_t len = _measurement.getMaxLen();
   uint8_t buf[len];
 
   // Use unified sensor API if available, only with fixed length sensor
-  if (_sensor && _measurement.isFixedLen())
-  {
+  if (_sensor && _measurement.isFixedLen()) {
     sensors_event_t event;
     _sensor->getEvent(&event);
 
     memcpy(buf, event.data, len);
   }
   // Else use callback
-  else if (_measure_cb)
-  {
+  else if (_measure_cb) {
     len = _measure_cb(buf, sizeof(buf));
     len = min(len, sizeof(buf));
   }
-  else
-  {
+  else {
     return; // nothing to measure
   }
 
@@ -164,8 +146,7 @@ void SparkFunBLE_Sensor::_measure_handler(void)
   if (!len) return;
 
   // Period = 0, compare with old data, only update on changes
-  if ( 0 == _period.read32() )
-  {
+  if ( 0 == _period.read32() ) {
     uint8_t prev_buf[_measurement.getMaxLen()];
     _measurement.read(prev_buf, sizeof(prev_buf));
 
@@ -181,15 +162,13 @@ void SparkFunBLE_Sensor::_measure_handler(void)
 // Static Callbacks
 //--------------------------------------------------------------------+
 
-void SparkFunBLE_Sensor::sensor_timer_cb(TimerHandle_t xTimer)
-{
+void SparkFunBLE_Sensor::sensor_timer_cb(TimerHandle_t xTimer) {
   SparkFunBLE_Sensor* svc = (SparkFunBLE_Sensor*) pvTimerGetTimerID(xTimer);
   svc->_measure_handler();
 }
 
 // Client update period, adjust timer accordingly
-void SparkFunBLE_Sensor::sensor_period_write_cb(uint16_t conn_hdl, BLECharacteristic* chr, uint8_t* data, uint16_t len)
-{
+void SparkFunBLE_Sensor::sensor_period_write_cb(uint16_t conn_hdl, BLECharacteristic* chr, uint8_t* data, uint16_t len) {
   (void) conn_hdl;
   SparkFunBLE_Sensor* svc = (SparkFunBLE_Sensor*) &chr->parentService();
 
@@ -199,8 +178,7 @@ void SparkFunBLE_Sensor::sensor_period_write_cb(uint16_t conn_hdl, BLECharacteri
   svc->_update_timer(ms);
 }
 
-void SparkFunBLE_Sensor::sensor_data_cccd_cb(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t value)
-{
+void SparkFunBLE_Sensor::sensor_data_cccd_cb(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t value) {
   SparkFunBLE_Sensor* svc = (SparkFunBLE_Sensor*) &chr->parentService();
 
   svc->_notify_handler(conn_hdl, value);
