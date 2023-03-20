@@ -48,12 +48,18 @@
 /* Battery Monitor */
 SFE_MAX1704X              lipo(MAX1704X_MAX17048);
 
+long curr_millis    = 0;
+long prev_millis    = 0;
+long batt_interval  = 5000; // 5s in ms
+
 /* BME280 Environmental Sensor */
 BME280                    envSensor;
 
 /* ISM330DHCX 6-DoF IMU Sensor */
 SparkFun_ISM330DHCX       imuSensor;
-sfe_ism_data_t _sensorData;
+
+sfe_ism_data_t _accelData;
+sfe_ism_data_t _gyroData;
 
 /* IMU BLE Service */
 SparkFunBLE_ISM330DHCX    bleIMU;
@@ -70,8 +76,6 @@ BLEDis                    bledis;
 
 /* BLE Battery Service helper class */
 BLEBas                    blebas;
-
-long previousMillis = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -109,14 +113,14 @@ void setup() {
 
   // Configure and start BLE Environmental Sensor Service
   // Make sure to give enough room between sensor IDs, the BME280 uses 3 IDs.
-  // Serial.println(F("Configuring the Environmental Sensor Service..."));
-  // bleENV.begin(&Serial, &envSensor, 100); // Sensor, ID.
+  Serial.println(F("Configuring the Environmental Sensor Service..."));
+  bleENV.begin(&envSensor, 100); // Sensor, ID.
 
 
   // Configure and start the IMU Sensor Service
   // Make sure to give enough room between sensor IDs, the IMU uses 2 IDs.
   Serial.println(F("Configuring the IMU Data Service..."));
-  bleIMU.begin(&Serial, &imuSensor, 200); // Sensor, ID.
+  bleIMU.begin(&imuSensor, 200); // Sensor, ID.
   
 
   Serial.println(F("Setup complete."));
@@ -132,24 +136,26 @@ void setup() {
 }
 
 void loop() {
-  // while(!imuSensor.checkStatus()){}
-  // imuSensor.getAccel(&_sensorData);
-  // Serial.print("Ax: ");
-  // Serial.println(_sensorData.xData);
-  // Serial.print("Ay: ");
-  // Serial.println(_sensorData.yData);
-  // Serial.print("Az: ");
-  // Serial.println(_sensorData.zData);
+
+  // Battery service handler
+  curr_millis = millis();
+  if ((curr_millis - prev_millis) > batt_interval) { // check every batt_interval ms
+    prev_millis = curr_millis;
+    if ( lipo.isChange(true) ) {  // only update if battery SOC is > +/- 1%
+      blebas.write(lipo.getSOC());
+    }
+  }
+
 }
 
 void startAdv() {
+  Serial.println(F("Begin advertising."));
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
 
-  // // Add services
-  // Bluefruit.Advertising.addService(bleENV);
-  // Bluefruit.Advertising.addService(bleIMU);
-
+  // Add services
+  Bluefruit.Advertising.addService(bleENV, bleIMU);
+  
   Bluefruit.ScanResponse.addName();
 
   /* Start Advertising
@@ -247,22 +253,19 @@ void initISM330DHCX() {
   Serial.println("ISM330DHCX successfully configured.");
 }
 
+uint16_t measureCallBack(uint8_t* buf, uint16_t bufsize) {
+  float imu_data[6];
+  imuSensor.getAccel(&_accelData);
+  imuSensor.getGyro(&_gyroData);
 
-// void readSensors() {
-//   // if (imuSensor.checkStatus()) {
-//   //   imuSensor.getAccel(&accelData);
-//   //   imuSensor.getGyro(&gyroData);
-//   //   accelXChar.writeValue(accelData.xData);
-//   //   accelYChar.writeValue(accelData.yData);
-//   //   accelZChar.writeValue(accelData.zData);
-//   //   gyroXChar.writeValue(0.0175*gyroData.xData);
-//   //   gyroYChar.writeValue(0.0175*gyroData.yData);
-//   //   gyroZChar.writeValue(0.0175*gyroData.zData);
-//   // }
-//   // while (envSensor.isMeasuring()){};
-//   // envSensor.readAllMeasurements(&envData);
-//   // tempChar.writeValue(envData.temperature);
-//   // humidChar.writeValue(envData.humidity);
-//   // pressChar.writeValue(envData.pressure);
+  imu_data[0] = _accelData.xData * 0.0098067;
+  imu_data[1] = _accelData.yData * 0.0098067;
+  imu_data[2] = _accelData.zData * 0.0098067;
+  imu_data[3] = _gyroData.xData * 0.017453;
+  imu_data[4] = _gyroData.yData * 0.017453;
+  imu_data[5] = _gyroData.zData * 0.017453;
 
-// }
+  memcpy(buf, &imu_data, 24);
+
+  return 24;
+}
