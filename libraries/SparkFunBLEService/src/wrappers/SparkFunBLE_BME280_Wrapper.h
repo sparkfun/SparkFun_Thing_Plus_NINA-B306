@@ -39,7 +39,7 @@ enum envDataType {
 class SparkFunBLE_BME280_Wrapper : public Adafruit_Sensor
 {
   public:
-    SparkFunBLE_BME280_Wrapper(Adafruit_USBD_CDC* Serial, BME280* envSensor, envDataType type = TEMPERATURE, int32_t sensorID = -1);
+    SparkFunBLE_BME280_Wrapper(BME280* envSensor, envDataType type = TEMPERATURE, int32_t sensorID = -1);
 
     bool getEvent(sensors_event_t *);
     void getSensor(sensor_t *);
@@ -52,7 +52,6 @@ class SparkFunBLE_BME280_Wrapper : public Adafruit_Sensor
     int32_t _sensorID;
 
     static constexpr float PA_TO_HPA = 0.01;
-    Adafruit_USBD_CDC* _Serial;
 };
 
 #endif // _SPARKFUNBLE_BME280_WRAPPER_H_
