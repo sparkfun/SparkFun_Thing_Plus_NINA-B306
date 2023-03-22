@@ -79,7 +79,7 @@ BLEBas                    blebas;
 
 void setup() {
   Serial.begin(115200);
-  while(!Serial) delay(10);
+  //while(!Serial) delay(10);
 
   Serial.println(F("SparkFun BLE Data Pipe Example"));
   Serial.println(F("------------------------------\n"));
